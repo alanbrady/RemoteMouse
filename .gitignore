@@ -16,5 +16,7 @@
 *.pro.user.*
 moc_*.cpp
 qrc_*.cpp
-Makefile
+Makefile*
+ui_*
+*.exe
 *-build-*

@@ -1,10 +1,5 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2013-12-12T19:31:55
-#
-#-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,8 +8,12 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    remotemouseserver.cpp \
+    remotemouseserverthread.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    remotemouseserver.h \
+    remotemouseserverthread.h
 
 FORMS    += mainwindow.ui
