@@ -8,11 +8,20 @@
 #define MAXLEN 30
 
 /**
- * @brief ClientIdInterface dictates how client id's and keys are stored
- * For now id's and keys are stored in plaintext data files.  Theoretically
+ * @brief ClientIdInterface dictates how client IDs and keys are stored
+ * For now IDs and keys are stored in plaintext data files.  Theoretically
  * they should be encrypted somehow, but that's probably a bit out of scope
- * for the project.  The only purpose of the id/key functionality is to
+ * for the project.  The only purpose of the id/key scheme is to
  * ensure only verified clients can connect and control the mouse.
+ *
+ * The scheme works such that the client generates a random id and key and
+ * inputs it into the server so that it knows who it is.
+ *
+ * TODO:
+ *  - check for ID conflicts
+ *
+ * WISHFUL THINKING:
+ *  - encrypt id/key file
  */
 
 class ClientIdInterface
