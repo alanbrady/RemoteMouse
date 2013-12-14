@@ -28,6 +28,7 @@ void ClientIdInterface::parseFile()
         if (strLen != -1) {
             int delimPos = getDelimPos(buffer, strLen, ':');
             if (delimPos != -1) {
+                // needs some double checking when I'm not exhausted
                 QString id = QString::fromLocal8Bit(buffer, delimPos);
                 QString key = QString::fromLocal8Bit(buffer+delimPos+1,
                                                      strLen-delimPos);
