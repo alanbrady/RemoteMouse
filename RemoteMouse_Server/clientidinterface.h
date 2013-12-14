@@ -7,6 +7,14 @@
 
 #define MAXLEN 30
 
+/**
+ * @brief ClientIdInterface dictates how client id's and keys are stored
+ * For now id's and keys are stored in plaintext data files.  Theoretically
+ * they should be encrypted somehow, but that's probably a bit out of scope
+ * for the project.  The only purpose of the id/key functionality is to
+ * ensure only verified clients can connect and control the mouse.
+ */
+
 class ClientIdInterface
 {
 public:

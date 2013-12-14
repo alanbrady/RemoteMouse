@@ -19,4 +19,5 @@ qrc_*.cpp
 Makefile*
 ui_*
 *.exe
+*.autosave
 *-build-*
