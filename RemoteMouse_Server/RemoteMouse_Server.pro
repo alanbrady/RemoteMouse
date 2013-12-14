@@ -10,10 +10,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     remotemouseserver.cpp \
-    remotemouseserverthread.cpp
+    remotemouseserverthread.cpp \
+    clientidinterface.cpp
 
 HEADERS  += mainwindow.h \
     remotemouseserver.h \
-    remotemouseserverthread.h
+    remotemouseserverthread.h \
+    clientidinterface.h
 
 FORMS    += mainwindow.ui
