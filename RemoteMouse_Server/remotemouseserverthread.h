@@ -29,7 +29,7 @@ private:
     QTcpSocket* m_socket;
     ClientIdInterface* m_ids;
     bool m_isVerified;
-    const char* m_challenge;
+    QByteArray m_challenge;
 
     void parseReadData(char* data, int dataLen);
     void sendChallenge();

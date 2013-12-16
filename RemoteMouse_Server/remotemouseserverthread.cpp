@@ -72,7 +72,7 @@ const QByteArray RemoteMouseServerThread::generateChallenge()
     for (int i = 0; i < CHALLENGE_LEN; i++) {
         stream << static_cast<char>(qrand() * 255);
     }
-    m_challenge = data.constData();
+    m_challenge = data;
     return data;
 }
 
@@ -97,13 +97,14 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
     char* response = new char[keyLen];
     strncpy(response, data, keyLen);
 
-    const char* challengeEnd = m_challenge + CHALLENGE_LEN;
-    while (m_challenge != challengeEnd) {
+    const char* challenge = m_challenge.constData();
+    const char* challengeEnd = challenge + CHALLENGE_LEN;
+    while (challenge != challengeEnd) {
         if (hashed == hashEnd) {
             hashed = hashStart;
             key = keyStart;
         }
-        *(hashed) = (*m_challenge++) ^ (*key++) ^ (*hashed++);
+        *(hashed) = (*challenge++) ^ (*key++) ^ (*hashed++);
     }
     bool isEqual = false;
     if (strncmp(response, hashed, keyLen) == 0)
