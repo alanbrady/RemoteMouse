@@ -1,6 +1,7 @@
 #include "clientidinterface.h"
 
-ClientIdInterface::ClientIdInterface(const QString& path)
+ClientIdInterface::ClientIdInterface(const QString& path, QMutex *mutex)
+    : m_mutex(mutex)
 {
     file.setFileName(path);
 }
@@ -20,6 +21,7 @@ void ClientIdInterface::setKeyForClient(const QString clientId,
 
 void ClientIdInterface::parseFile()
 {
+    QMutexLocker locker(m_mutex);
     file.open(QFile::ReadOnly);
     int bufferLen = MAXLEN*2+2;
     char* buffer = new char[bufferLen];
@@ -41,12 +43,14 @@ void ClientIdInterface::parseFile()
         }
 
     }
+    file.close();
     delete [] buffer;
 }
 
 void ClientIdInterface::saveKeyToFile(const QString cliendId,
                                       const QString clientKey)
 {
+    QMutexLocker locker(m_mutex);
     file.open(QFile::Append);
     file.write(cliendId.toStdString().c_str(), MAXLEN);
     file.write(":", 1);

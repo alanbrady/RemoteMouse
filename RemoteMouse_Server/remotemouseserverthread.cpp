@@ -1,8 +1,9 @@
 #include "remotemouseserverthread.h"
 
-RemoteMouseServerThread::RemoteMouseServerThread(quintptr socketDesc, QMutex *mutex,
+RemoteMouseServerThread::RemoteMouseServerThread(quintptr socketDesc,
+                                                 ClientIdInterface *ids,
                                                  QObject *parent) :
-    QThread(parent), m_socketDesc(socketDesc), m_sharedMutex(mutex),
+    QThread(parent), m_socketDesc(socketDesc), m_ids(ids),
     m_isVerified(false)
 {
 }
@@ -56,13 +57,11 @@ const QByteArray RemoteMouseServerThread::generateChallenge()
     for (int i = 0; i < CHALLENGE_LEN; i++) {
         stream << static_cast<char>(qrand() * 255);
     }
-
     return data;
 }
 
 bool RemoteMouseServerThread::verifyResponse(char *data)
 {
-    // TODO
     return true;
 }
 

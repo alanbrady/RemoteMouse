@@ -5,7 +5,7 @@
 #include <QTcpSocket>
 #include <QMutex>
 #include <QDataStream>
-
+#include "clientidinterface.h"
 
 #define MAX_READ 100
 #define CHALLENGE_LEN 50
@@ -14,7 +14,7 @@ class RemoteMouseServerThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit RemoteMouseServerThread(quintptr socketDesc, QMutex* mutex,
+    explicit RemoteMouseServerThread(quintptr socketDesc, ClientIdInterface* ids,
                                      QObject *parent = 0);
     ~RemoteMouseServerThread();
 
@@ -27,7 +27,7 @@ signals:
 private:
     int m_socketDesc;
     QTcpSocket* m_socket;
-    QMutex *m_sharedMutex;
+    ClientIdInterface* m_ids;
     bool m_isVerified;
 
     void parseReadData(char* data);

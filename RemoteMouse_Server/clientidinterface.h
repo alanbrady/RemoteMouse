@@ -4,6 +4,8 @@
 #include <QString>
 #include <QFile>
 #include <QHash>
+#include <QMutex>
+#include <QMutexLocker>
 
 #define MAXLEN 30
 
@@ -27,7 +29,7 @@
 class ClientIdInterface
 {
 public:
-    ClientIdInterface(const QString& path);
+    ClientIdInterface(const QString& path, QMutex* mutex);
 
     const QString getKeyForClient(const QString& clientId);
     void setKeyForClient(const QString clientId, const QString clientKey);
@@ -35,6 +37,7 @@ public:
 private:
     QFile file;
     QHash<QString, QString> keys;
+    QMutex* m_mutex;
 
     void parseFile();
     void saveKeyToFile(const QString cliendId, const QString clientKey);
