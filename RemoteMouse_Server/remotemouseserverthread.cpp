@@ -42,7 +42,7 @@ void RemoteMouseServerThread::parseReadData(char *data, int dataLen)
     if (strncmp(data, "CHAL_REQ", 8) == 0) {
         sendChallenge();
     } else if (strncmp(data, "CHAL_RSP", 8) == 0) {
-        if (verifyResponse(data, dataLen))
+        if (verifyResponse(data))
             m_isVerified = true;
     } else if (strncmp(data, "MOUS_DAT", 8) == 0) {
         // mouse data should be a +/- percent to move mouse
@@ -65,17 +65,18 @@ void RemoteMouseServerThread::sendChallenge()
     }
 }
 
-const QByteArray RemoteMouseServerThread::generateChallenge() const
+const QByteArray RemoteMouseServerThread::generateChallenge()
 {
     QByteArray data;
     QDataStream stream(&data, QIODevice::WriteOnly);
     for (int i = 0; i < CHALLENGE_LEN; i++) {
         stream << static_cast<char>(qrand() * 255);
     }
+    m_challenge = data.constData();
     return data;
 }
 
-bool RemoteMouseServerThread::verifyResponse(const char *data, int dataLen)
+bool RemoteMouseServerThread::verifyResponse(const char *data)
 {
     char* hashed;
     int idLen = m_ids->getIdLen();
@@ -95,15 +96,14 @@ bool RemoteMouseServerThread::verifyResponse(const char *data, int dataLen)
 
     char* response = new char[keyLen];
     strncpy(response, data, keyLen);
-    data += keyLen; // go past response
 
-    const char* endData = data+dataLen;
-    while (data != endData) {
+    const char* challengeEnd = m_challenge + CHALLENGE_LEN;
+    while (m_challenge != challengeEnd) {
         if (hashed == hashEnd) {
             hashed = hashStart;
             key = keyStart;
         }
-        *(hashed) = (*data++) ^ (*key++) ^ (*hashed++);
+        *(hashed) = (*m_challenge++) ^ (*key++) ^ (*hashed++);
     }
     bool isEqual = false;
     if (strncmp(response, hashed, keyLen) == 0)
