@@ -6,7 +6,7 @@ ClientIdInterface::ClientIdInterface(const QString& path, QMutex *mutex)
     file.setFileName(path);
 }
 
-const QString ClientIdInterface::getKeyForClient(const QString &clientId)
+const QByteArray ClientIdInterface::getKeyForClient(const QString &clientId) const
 {
     QMutexLocker locker(m_mutex);
     return keys.value(clientId, "error");
