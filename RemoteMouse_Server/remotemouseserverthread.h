@@ -6,7 +6,9 @@
 #include <QMutex>
 #include <QDataStream>
 
+
 #define MAX_READ 100
+#define CHALLENGE_LEN 50
 
 class RemoteMouseServerThread : public QThread
 {
@@ -30,6 +32,7 @@ private:
 
     void parseReadData(char* data);
     void sendChallenge();
+    const QByteArray generateChallenge();
     bool verifyResponse(char* data);
 
 };

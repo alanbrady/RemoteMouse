@@ -49,6 +49,17 @@ void RemoteMouseServerThread::sendChallenge()
     // TODO
 }
 
+const QByteArray RemoteMouseServerThread::generateChallenge()
+{
+    QByteArray data;
+    QDataStream stream(&data, QIODevice::WriteOnly);
+    for (int i = 0; i < CHALLENGE_LEN; i++) {
+        stream << static_cast<char>(qrand() * 255);
+    }
+
+    return data;
+}
+
 bool RemoteMouseServerThread::verifyResponse(char *data)
 {
     // TODO
