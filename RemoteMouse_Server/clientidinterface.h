@@ -2,6 +2,7 @@
 #define CLIENTIDINTERFACE_H
 
 #include <QString>
+#include <QByteArray>
 #include <QFile>
 #include <QHash>
 #include <QMutex>
@@ -32,15 +33,15 @@ public:
     ClientIdInterface(const QString& path, QMutex* mutex);
 
     const QString getKeyForClient(const QString& clientId);
-    void setKeyForClient(const QString clientId, const QString clientKey);
+    void setKeyForClient(const QString& clientId, const QByteArray& clientKey);
 
 private:
     QFile file;
-    QHash<QString, QString> keys;
+    QHash<QString, QByteArray> keys;
     QMutex* m_mutex;
 
     void parseFile();
-    void saveKeyToFile(const QString cliendId, const QString clientKey);
+    void saveKeyToFile(const QString &cliendId, const QByteArray &clientKey);
     int getDelimPos(const char* str, const int strLen, const char delim);
 };
 

@@ -30,10 +30,10 @@ private:
     ClientIdInterface* m_ids;
     bool m_isVerified;
 
-    void parseReadData(char* data);
+    void parseReadData(char* data, int dataLen);
     void sendChallenge();
-    const QByteArray generateChallenge();
-    bool verifyResponse(char* data);
+    const QByteArray generateChallenge() const;
+    bool verifyResponse(const char *data, int dataLen);
 
 };
 
