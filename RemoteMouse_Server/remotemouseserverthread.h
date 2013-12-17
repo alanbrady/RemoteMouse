@@ -36,7 +36,8 @@ private:
     QByteArray m_challenge;
 
     void parseReadData(char* data, int dataLen);
-    void parseMouseData(char* data, int dataLen);
+    void parseMouseMoveData(char* data, int dataLen);
+    void performMouseClick(char* data, int dataLen);
     void sendChallenge();
     const QByteArray generateChallenge();
     bool verifyResponse(const char *data);

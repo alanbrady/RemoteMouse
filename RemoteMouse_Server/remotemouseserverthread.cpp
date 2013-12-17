@@ -42,14 +42,21 @@ void RemoteMouseServerThread::parseReadData(char *data, int dataLen)
     if (strncmp(data, "CHAL_REQ", 8) == 0) {
         sendChallenge();
     } else if (strncmp(data, "CHAL_RSP", 8) == 0) {
-        if (verifyResponse(data))
-            m_isVerified = true;
-    } else if (strncmp(data, "MOUS_DAT", 8) == 0) {
+        m_isVerified = verifyResponse(data);
+    } else if (strncmp(data, "MOUS_MOV", 8) == 0) {
         if (m_isVerified)
-            parseMouseData(data, dataLen);
+            parseMouseMoveData(data, dataLen);
         else {
             m_socket->close();
             QString fail("Error: attempt to send mouse data without verification");
+            emit serverError(fail);
+        }
+    } else if (strncmp(data, "MOUS_CLK", 8) == 0) {
+        if (m_isVerified)
+            performMouseClick(data, dataLen);
+        else {
+            m_socket->close();
+            QString fail("Error: attempt to send mouse click without verification");
             emit serverError(fail);
         }
     } else {
@@ -58,7 +65,7 @@ void RemoteMouseServerThread::parseReadData(char *data, int dataLen)
     }
 }
 
-void RemoteMouseServerThread::parseMouseData(char *data, int dataLen)
+void RemoteMouseServerThread::parseMouseMoveData(char *data, int dataLen)
 {
     // Interpret mouse move data
     // mouse data should be a +/- percent to move mouse
@@ -85,6 +92,13 @@ void RemoteMouseServerThread::parseMouseData(char *data, int dataLen)
 
     QCursor c = QApplication::desktop()->cursor();
     // TODO - complete implementation of setting mouse pos
+}
+
+void RemoteMouseServerThread::performMouseClick(char *data, int dataLen)
+{
+    // Needed utilities outside of Qt API, will need platform specific
+    // code here
+    // TODO
 }
 
 void RemoteMouseServerThread::sendChallenge()
