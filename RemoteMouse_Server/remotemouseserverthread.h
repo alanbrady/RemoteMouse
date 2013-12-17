@@ -34,10 +34,11 @@ private:
     ClientIdInterface* m_ids;
     bool m_isVerified;
     QByteArray m_challenge;
+    QRect screenDims;
 
-    void parseReadData(char* data, int dataLen);
-    void parseMouseMoveData(char* data, int dataLen);
-    void performMouseClick(char* data, int dataLen);
+    void parseReadData(char* data);
+    void parseMouseMoveData(char* data);
+    void performMouseClick();
     void sendChallenge();
     const QByteArray generateChallenge();
     bool verifyResponse(const char *data);

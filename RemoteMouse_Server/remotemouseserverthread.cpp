@@ -6,6 +6,7 @@ RemoteMouseServerThread::RemoteMouseServerThread(quintptr socketDesc,
     QThread(parent), m_socketDesc(socketDesc), m_ids(ids),
     m_isVerified(false)
 {
+    screenDims = QApplication::desktop()->screenGeometry();
 }
 
 RemoteMouseServerThread::~RemoteMouseServerThread()
@@ -27,7 +28,7 @@ void RemoteMouseServerThread::run()
             char* data = new char[MAX_READ];
             int dataLen = m_socket->read(data, MAX_READ);
             if (dataLen != -1) {
-                parseReadData(data, dataLen);
+                parseReadData(data);
             } else {
                 QString fail("Error: failed to read socket data");
                 emit serverError(fail);
@@ -37,7 +38,7 @@ void RemoteMouseServerThread::run()
     }
 }
 
-void RemoteMouseServerThread::parseReadData(char *data, int dataLen)
+void RemoteMouseServerThread::parseReadData(char *data)
 {
     if (strncmp(data, "CHAL_REQ", 8) == 0) {
         sendChallenge();
@@ -45,7 +46,7 @@ void RemoteMouseServerThread::parseReadData(char *data, int dataLen)
         m_isVerified = verifyResponse(data);
     } else if (strncmp(data, "MOUS_MOV", 8) == 0) {
         if (m_isVerified)
-            parseMouseMoveData(data, dataLen);
+            parseMouseMoveData(data);
         else {
             m_socket->close();
             QString fail("Error: attempt to send mouse data without verification");
@@ -53,7 +54,7 @@ void RemoteMouseServerThread::parseReadData(char *data, int dataLen)
         }
     } else if (strncmp(data, "MOUS_CLK", 8) == 0) {
         if (m_isVerified)
-            performMouseClick(data, dataLen);
+            performMouseClick();
         else {
             m_socket->close();
             QString fail("Error: attempt to send mouse click without verification");
@@ -65,20 +66,23 @@ void RemoteMouseServerThread::parseReadData(char *data, int dataLen)
     }
 }
 
-void RemoteMouseServerThread::parseMouseMoveData(char *data, int dataLen)
+void RemoteMouseServerThread::parseMouseMoveData(char *data)
 {
     // Interpret mouse move data
     // mouse data should be a +/- percent to move mouse
-    // Format should be MOUS_DAT0.---0.---
+    // Format should be MOUS_DAT(+/-)0.---(+/-)0.---
     // First number is x percent, second number is y percent
     data += 8; // jump past socket tag
     double xPerc;
     double yPerc;
-    char xStr[5];
-    char yStr[5];
-    memcpy(xStr, data, 5);
-    data += 5; // jump past x data
-    memcpy(yStr, data, 5);
+    char xStr[7];
+    char yStr[7];
+    *(xStr+6) = '0'; // set last bits to null for sscanf
+    *(yStr+6) = '0';
+    memcpy(xStr, data, 6);
+    data += 6; // jump past x data
+    memcpy(yStr, data, 6);
+
 
     // parse data into a double
     if (sscanf(xStr, "%lf", &xPerc) != 1) {
@@ -90,15 +94,23 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data, int dataLen)
         emit serverError(fail);
     }
 
-    QCursor c = QApplication::desktop()->cursor();
-    // TODO - complete implementation of setting mouse pos
+
+    QDesktopWidget* desktop = QApplication::desktop();
+    QCursor c = desktop->cursor();
+    int xDif = screenDims.x()*xPerc;
+    int yDif = screenDims.y()*yPerc;
+    QPoint pos = desktop->mapToGlobal(c.pos());
+    pos.setX(pos.x()+xDif);
+    pos.setY(pos.y()+yDif);
+    desktop->setCursor(c);
 }
 
-void RemoteMouseServerThread::performMouseClick(char *data, int dataLen)
+void RemoteMouseServerThread::performMouseClick()
 {
     // Needed utilities outside of Qt API, will need platform specific
     // code here
-    // TODO
+    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP,
+                1, 1, 0, 0);
 }
 
 void RemoteMouseServerThread::sendChallenge()
@@ -152,7 +164,8 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
             hashed = hashStart;
             key = keyStart;
         }
-        *(hashed) = (*challenge++) ^ (*key++) ^ (*hashed++);
+        *(hashed) = (*challenge++) ^ (*key++) ^ (*hashed);
+        hashed++;
     }
     bool isEqual = false;
     if (strncmp(response, hashed, keyLen) == 0)
