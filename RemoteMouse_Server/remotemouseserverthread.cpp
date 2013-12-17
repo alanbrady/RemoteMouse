@@ -45,12 +45,46 @@ void RemoteMouseServerThread::parseReadData(char *data, int dataLen)
         if (verifyResponse(data))
             m_isVerified = true;
     } else if (strncmp(data, "MOUS_DAT", 8) == 0) {
-        // mouse data should be a +/- percent to move mouse
-        // TODO
+        if (m_isVerified)
+            parseMouseData(data, dataLen);
+        else {
+            m_socket->close();
+            QString fail("Error: attempt to send mouse data without verification");
+            emit serverError(fail);
+        }
     } else {
         QString fail("Error: bad client request");
         emit serverError(fail);
     }
+}
+
+void RemoteMouseServerThread::parseMouseData(char *data, int dataLen)
+{
+    // Interpret mouse move data
+    // mouse data should be a +/- percent to move mouse
+    // Format should be MOUS_DAT0.---0.---
+    // First number is x percent, second number is y percent
+    data += 8; // jump past socket tag
+    double xPerc;
+    double yPerc;
+    char xStr[5];
+    char yStr[5];
+    memcpy(xStr, data, 5);
+    data += 5; // jump past x data
+    memcpy(yStr, data, 5);
+
+    // parse data into a double
+    if (sscanf(xStr, "%lf", &xPerc) != 1) {
+        QString fail("Error: failed to parse x perc");
+        emit serverError(fail);
+    }
+    if (sscanf(yStr, "%lf", &yPerc) != 1) {
+        QString fail("Error: failed to parse y perc");
+        emit serverError(fail);
+    }
+
+    QCursor c = QApplication::desktop()->cursor();
+    // TODO - complete implementation of setting mouse pos
 }
 
 void RemoteMouseServerThread::sendChallenge()

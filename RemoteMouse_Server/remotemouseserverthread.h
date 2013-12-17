@@ -5,6 +5,10 @@
 #include <QTcpSocket>
 #include <QMutex>
 #include <QDataStream>
+#include <QCursor>
+#include <windows.h>
+#include <QApplication>
+#include <QDesktopWidget>
 #include "clientidinterface.h"
 
 #define MAX_READ 100
@@ -32,6 +36,7 @@ private:
     QByteArray m_challenge;
 
     void parseReadData(char* data, int dataLen);
+    void parseMouseData(char* data, int dataLen);
     void sendChallenge();
     const QByteArray generateChallenge();
     bool verifyResponse(const char *data);
