@@ -109,8 +109,12 @@ void RemoteMouseServerThread::performMouseClick()
 {
     // Needed utilities outside of Qt API, will need platform specific
     // code here
+
+    // Windows code
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP,
-                1, 1, 0, 0);
+                0, 0, 0, 0);
+
+    // TODO - other platforms if needed
 }
 
 void RemoteMouseServerThread::sendChallenge()
