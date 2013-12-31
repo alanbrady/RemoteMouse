@@ -10,6 +10,7 @@
 *.dll
 *.dylib
 
+
 # Qt-es
 
 *.pro.user
@@ -21,3 +22,10 @@ ui_*
 *.exe
 *.autosave
 *-build-*
+
+
+# Android
+
+*classes.dex
+*resources.ap_
+*jarlist.cache
