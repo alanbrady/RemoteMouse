@@ -10,7 +10,6 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 
 
 /**
@@ -26,9 +25,8 @@ public class TrackpadView extends View {
 	private TextPaint mTextPaint;
 	private float mTextWidth;
 	private float mTextHeight;
-
-	private TextView mXText;
-	private TextView mYText;
+	
+	private TrackpadCallback mTpCallback;
 	
 	public TrackpadView(Context context) {
 		super(context);
@@ -65,6 +63,8 @@ public class TrackpadView extends View {
 			mExampleDrawable.setCallback(this);
 		}
 
+		mTpCallback = null;
+		
 		a.recycle();
 
 		// Set up a default TextPaint object
@@ -117,101 +117,101 @@ public class TrackpadView extends View {
 	 * 
 	 * @return The example string attribute value.
 	 */
-	public String getExampleString() {
-		return mExampleString;
-	}
-
-	/**
-	 * Sets the view's example string attribute value. In the example view, this
-	 * string is the text to draw.
-	 * 
-	 * @param exampleString
-	 *            The example string attribute value to use.
-	 */
-	public void setExampleString(String exampleString) {
-		mExampleString = exampleString;
-		invalidateTextPaintAndMeasurements();
-	}
-
-	/**
-	 * Gets the example color attribute value.
-	 * 
-	 * @return The example color attribute value.
-	 */
-	public int getExampleColor() {
-		return mExampleColor;
-	}
-
-	/**
-	 * Sets the view's example color attribute value. In the example view, this
-	 * color is the font color.
-	 * 
-	 * @param exampleColor
-	 *            The example color attribute value to use.
-	 */
-	public void setExampleColor(int exampleColor) {
-		mExampleColor = exampleColor;
-		invalidateTextPaintAndMeasurements();
-	}
-
-	/**
-	 * Gets the example dimension attribute value.
-	 * 
-	 * @return The example dimension attribute value.
-	 */
-	public float getExampleDimension() {
-		return mExampleDimension;
-	}
-
-	/**
-	 * Sets the view's example dimension attribute value. In the example view,
-	 * this dimension is the font size.
-	 * 
-	 * @param exampleDimension
-	 *            The example dimension attribute value to use.
-	 */
-	public void setExampleDimension(float exampleDimension) {
-		mExampleDimension = exampleDimension;
-		invalidateTextPaintAndMeasurements();
-	}
-
-	/**
-	 * Gets the example drawable attribute value.
-	 * 
-	 * @return The example drawable attribute value.
-	 */
-	public Drawable getExampleDrawable() {
-		return mExampleDrawable;
-	}
-
-	/**
-	 * Sets the view's example drawable attribute value. In the example view,
-	 * this drawable is drawn above the text.
-	 * 
-	 * @param exampleDrawable
-	 *            The example drawable attribute value to use.
-	 */
-	public void setExampleDrawable(Drawable exampleDrawable) {
-		mExampleDrawable = exampleDrawable;
-	}
+//	public String getExampleString() {
+//		return mExampleString;
+//	}
+//
+//	/**
+//	 * Sets the view's example string attribute value. In the example view, this
+//	 * string is the text to draw.
+//	 * 
+//	 * @param exampleString
+//	 *            The example string attribute value to use.
+//	 */
+//	public void setExampleString(String exampleString) {
+//		mExampleString = exampleString;
+//		invalidateTextPaintAndMeasurements();
+//	}
+//
+//	/**
+//	 * Gets the example color attribute value.
+//	 * 
+//	 * @return The example color attribute value.
+//	 */
+//	public int getExampleColor() {
+//		return mExampleColor;
+//	}
+//
+//	/**
+//	 * Sets the view's example color attribute value. In the example view, this
+//	 * color is the font color.
+//	 * 
+//	 * @param exampleColor
+//	 *            The example color attribute value to use.
+//	 */
+//	public void setExampleColor(int exampleColor) {
+//		mExampleColor = exampleColor;
+//		invalidateTextPaintAndMeasurements();
+//	}
+//
+//	/**
+//	 * Gets the example dimension attribute value.
+//	 * 
+//	 * @return The example dimension attribute value.
+//	 */
+//	public float getExampleDimension() {
+//		return mExampleDimension;
+//	}
+//
+//	/**
+//	 * Sets the view's example dimension attribute value. In the example view,
+//	 * this dimension is the font size.
+//	 * 
+//	 * @param exampleDimension
+//	 *            The example dimension attribute value to use.
+//	 */
+//	public void setExampleDimension(float exampleDimension) {
+//		mExampleDimension = exampleDimension;
+//		invalidateTextPaintAndMeasurements();
+//	}
+//
+//	/**
+//	 * Gets the example drawable attribute value.
+//	 * 
+//	 * @return The example drawable attribute value.
+//	 */
+//	public Drawable getExampleDrawable() {
+//		return mExampleDrawable;
+//	}
+//
+//	/**
+//	 * Sets the view's example drawable attribute value. In the example view,
+//	 * this drawable is drawn above the text.
+//	 * 
+//	 * @param exampleDrawable
+//	 *            The example drawable attribute value to use.
+//	 */
+//	public void setExampleDrawable(Drawable exampleDrawable) {
+//		mExampleDrawable = exampleDrawable;
+//	}
 	
-	public void setXYTextView(TextView xtext, TextView ytext) {
-		mXText = xtext;
-		mYText = ytext;
+	public void setCallback(TrackpadCallback callback) {
+		mTpCallback = callback;
 	}
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
 		float x = e.getX();
 		float y = e.getY();
-		String xstr = String.valueOf(x);
-		String ystr = String.valueOf(y);
-		if (mXText != null) {
-			mXText.setText(xstr);
-			mYText.setText(ystr);
+		if (mTpCallback != null) {
+			mTpCallback.callback(x, y);
 		} else
 			System.out.println("Error: text fields are null");
 		
 		return true;
 	}
+}
+
+interface TrackpadCallback {
+	public void callback(float x, float y);
 }
