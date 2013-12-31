@@ -29,11 +29,65 @@
             android:id="@+id/text_ystatic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="        Y: "
+            android:text="          Y: "
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@+id/text_yedit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/starting_textview"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/text_dxstatic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DX: "
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/text_dxedit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/starting_textview"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/text_dystatic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="       DY: "
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/text_dyedit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/starting_textview"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/text_velstatic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vel: "
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/text_veledit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/starting_textview"

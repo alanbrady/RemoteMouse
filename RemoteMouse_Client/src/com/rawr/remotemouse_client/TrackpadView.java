@@ -201,17 +201,15 @@ public class TrackpadView extends View {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
-		float x = e.getX();
-		float y = e.getY();
 		if (mTpCallback != null) {
-			mTpCallback.callback(x, y);
+			mTpCallback.callback(e);
 		} else
-			System.out.println("Error: text fields are null");
+			System.out.println("Error: no callback initiated");
 		
 		return true;
 	}
 }
 
 interface TrackpadCallback {
-	public void callback(float x, float y);
+	public void callback(MotionEvent e);
 }
