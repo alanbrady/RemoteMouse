@@ -72,6 +72,7 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data)
     // mouse data should be a +/- percent to move mouse
     // Format should be MOUS_DAT(+/-)0.---(+/-)0.---
     // First number is x percent, second number is y percent
+    // -- consider revising this to pixels instead of percents
     data += 8; // jump past socket tag
     double xPerc;
     double yPerc;
@@ -168,7 +169,7 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
             hashed = hashStart;
             key = keyStart;
         }
-        *(hashed) = (*challenge++) ^ (*key++) ^ (*hashed);
+        *(hashed) = (*(challenge++)) ^ (*(key++)) ^ (*hashed);
         hashed++;
     }
     bool isEqual = false;
