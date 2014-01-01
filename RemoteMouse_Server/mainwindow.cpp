@@ -6,7 +6,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    startServer();
+
+    m_clients = ui->table_clients;
+
+    connect(ui->button_start, SIGNAL(clicked()), this, SLOT(startServer()));
+    connect(ui->button_stop, SIGNAL(clicked()), this, SLOT(stopServer()));
+
+    ui->statusBar->showMessage("Remote Mouse initialized.");
 }
 
 MainWindow::~MainWindow()
@@ -16,12 +22,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::startServer()
 {
-    if (!server.listen(QHostAddress::Any, LISTEN_PORT)) {
-        // TODO error
+    if (!m_server.listen(QHostAddress::Any, LISTEN_PORT)) {
+        ui->statusBar->showMessage("Error: unable to start server!");
+    } else {
+        QString msg("Server is now listening on port: ");
+        msg += QString::number(LISTEN_PORT);
+        ui->statusBar->showMessage(msg);
     }
 }
 
 void MainWindow::stopServer()
 {
-    server.close();
+    m_server.close();
+    ui->statusBar->showMessage("Server is not listening for connections.");
+
 }

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTableView>
 #include "remotemouseserver.h"
 
 #define LISTEN_PORT 48048
@@ -23,7 +24,9 @@ public slots:
     void stopServer();
 
 private:
-    RemoteMouseServer server;
+    QTableView* m_clients;
+
+    RemoteMouseServer m_server;
     Ui::MainWindow *ui;
 };
 
