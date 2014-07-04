@@ -48,6 +48,8 @@ void RemoteMouseServerThread::parseReadData(char *data)
         if (m_isVerified)
             parseMouseMoveData(data);
         else {
+            // close socket and emit failure message if attenmpts to send mouse data
+            // without passing verification
             m_socket->close();
             QString fail("Error: attempt to send mouse data without verification");
             emit serverError(fail);
@@ -130,6 +132,9 @@ void RemoteMouseServerThread::sendChallenge()
     }
 }
 
+// randomly generate a sequence of characters
+// IDEA: random challenge length, right now it's static but I not sure if that
+//       makes a huge difference
 const QByteArray RemoteMouseServerThread::generateChallenge()
 {
     QByteArray data;
@@ -141,6 +146,7 @@ const QByteArray RemoteMouseServerThread::generateChallenge()
     return data;
 }
 
+// response data is in the form {(id)(repsonse)}
 bool RemoteMouseServerThread::verifyResponse(const char *data)
 {
     char* hashed;
