@@ -26,6 +26,8 @@ ui_*
 
 # Android
 
+*/bin/*
+*/.metadata/*
 *classes.dex
 *resources.ap_
 *.apk
