@@ -7,9 +7,11 @@
 #include <QHash>
 #include <QMutex>
 #include <QMutexLocker>
-
-#define MAXLEN 30
+#include <time.h>
+#include <stdlib.h>
+#define MAXLEN 50
 #define ID_LEN 8
+#define KEY_LEN 10
 
 /**
  * @brief ClientIdInterface dictates how client IDs and keys are stored
@@ -32,15 +34,20 @@ class ClientIdInterface
 {
 public:
     ClientIdInterface(const QString& path, QMutex* mutex);
+    ~ClientIdInterface();
 
     const QByteArray getKeyForClient(const QString& clientId) const;
+    const QByteArray generateNewKey() const;
     void setKeyForClient(const QString& clientId, const QByteArray& clientKey);
     int static getIdLen() { return ID_LEN; }
 
 private:
-    QFile file;
-    QHash<QString, QByteArray> keys;
+    const char *m_keyChars;
+    unsigned int m_keyCharLen;
+    QFile m_file;
+    QHash<QString, QByteArray> m_keys;
     QMutex* m_mutex;
+
 
     void parseFile();
     void saveKeyToFile(const QString &cliendId, const QByteArray &clientKey);

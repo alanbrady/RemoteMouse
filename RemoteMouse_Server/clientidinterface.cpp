@@ -3,31 +3,50 @@
 ClientIdInterface::ClientIdInterface(const QString& path, QMutex *mutex)
     : m_mutex(mutex)
 {
-    file.setFileName(path);
+    m_keyChars = "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\
+            1234567890@!?$";
+    m_keyCharLen = sizeof(m_keyChars)/sizeof(m_keyChars[0]);
+    m_file.setFileName(path);
+    srand(time(NULL));
+}
+
+ClientIdInterface::~ClientIdInterface()
+{
+    if (m_file.isOpen()) m_file.close();
 }
 
 const QByteArray ClientIdInterface::getKeyForClient(const QString &clientId) const
 {
     QMutexLocker locker(m_mutex);
-    return keys.value(clientId, "error");
+    return m_keys.value(clientId, "error");
 
+}
+
+const QByteArray ClientIdInterface::generateNewKey() const
+{
+    QByteArray newKey;
+    newKey.resize(m_keyCharLen);
+    for (int i = 0; i < KEY_LEN; i++) {
+        newKey[i] = m_keyChars[rand()%m_keyCharLen];
+    }
+    return newKey;
 }
 
 void ClientIdInterface::setKeyForClient(const QString &clientId,
                                         const QByteArray &clientKey)
 {
-    keys.insert(clientId, clientKey);
+    m_keys.insert(clientId, clientKey);
     saveKeyToFile(clientId, clientKey);
 }
 
 void ClientIdInterface::parseFile()
 {
     QMutexLocker locker(m_mutex);
-    file.open(QFile::ReadOnly);
+    m_file.open(QFile::ReadOnly);
     int bufferLen = MAXLEN*2+2;
     char* buffer = new char[bufferLen];
-    while (file.isReadable()) {
-        int strLen = file.readLine(buffer, bufferLen);
+    while (m_file.isReadable()) {
+        int strLen = m_file.readLine(buffer, bufferLen);
         if (strLen != -1) {
             int delimPos = getDelimPos(buffer, strLen, ':');
             if (delimPos != -1) {
@@ -35,7 +54,7 @@ void ClientIdInterface::parseFile()
                 QString id = QString::fromLocal8Bit(buffer, delimPos);
                 QByteArray key = QByteArray::fromRawData(buffer+delimPos+1,
                                                      strLen-delimPos);
-                keys.insert(id, key);
+                m_keys.insert(id, key);
             } else {
                 // error
             }
@@ -44,7 +63,7 @@ void ClientIdInterface::parseFile()
         }
 
     }
-    file.close();
+    m_file.close();
     delete[] buffer;
 }
 
@@ -52,12 +71,12 @@ void ClientIdInterface::saveKeyToFile(const QString& cliendId,
                                       const QByteArray& clientKey)
 {
     QMutexLocker locker(m_mutex);
-    file.open(QFile::Append);
-    file.write(cliendId.toStdString().c_str(), MAXLEN);
-    file.write(":", 1);
-    file.write(clientKey, MAXLEN);
-    file.write("\n", 1);
-    file.close();
+    m_file.open(QFile::Append);
+    m_file.write(cliendId.toStdString().c_str(), MAXLEN);
+    m_file.write(":", 1);
+    m_file.write(clientKey, MAXLEN);
+    m_file.write("\n", 1);
+    m_file.close();
 }
 
 int ClientIdInterface::getDelimPos(const char *str, const int strLen,
