@@ -11,11 +11,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     remotemouseserver.cpp \
     remotemouseserverthread.cpp \
-    clientidinterface.cpp
+    clientidinterface.cpp \
+    clientidkeydialog.cpp
 
 HEADERS  += mainwindow.h \
     remotemouseserver.h \
     remotemouseserverthread.h \
-    clientidinterface.h
+    clientidinterface.h \
+    clientidkeydialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    clientidkeydialog.ui

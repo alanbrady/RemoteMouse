@@ -22,6 +22,7 @@ ui_*
 *.exe
 *.autosave
 *-build-*
+*object_script*
 
 
 # Android
