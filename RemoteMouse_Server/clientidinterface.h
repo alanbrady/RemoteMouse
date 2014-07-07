@@ -23,6 +23,8 @@
  * The scheme works such that the client generates a random id and key and
  * inputs it into the server so that it knows who it is.
  *
+ * ClientIdInterface is a singleton by design
+ *
  * TODO:
  *  - check for ID conflicts
  *
@@ -33,21 +35,26 @@
 class ClientIdInterface
 {
 public:
-    ClientIdInterface(const QString& path, QMutex* mutex);
     ~ClientIdInterface();
-
     const QByteArray getKeyForClient(const QString& clientId) const;
     const QByteArray generateNewKey() const;
     void setKeyForClient(const QString& clientId, const QByteArray& clientKey);
     int static getIdLen() { return ID_LEN; }
+    static ClientIdInterface* instance();
 
 private:
+    // Constructors are made private to enforce singleton, access should be
+    // limited to the instance() function
+    ClientIdInterface();
+    explicit ClientIdInterface(const ClientIdInterface&);
+    const ClientIdInterface& operator=(const ClientIdInterface&);
+
     const char *m_keyChars;
     unsigned int m_keyCharLen;
     QFile m_file;
     QHash<QString, QByteArray> m_keys;
-    QMutex* m_mutex;
-
+    static QMutex *m_mutex;
+    static ClientIdInterface *m_instance;
 
     void parseFile();
     void saveKeyToFile(const QString &cliendId, const QByteArray &clientKey);

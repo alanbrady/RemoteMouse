@@ -1,18 +1,27 @@
 #include "clientidinterface.h"
 
-ClientIdInterface::ClientIdInterface(const QString& path, QMutex *mutex)
-    : m_mutex(mutex)
+ClientIdInterface* ClientIdInterface::m_instance = 0;
+QMutex* ClientIdInterface::m_mutex = new QMutex();
+
+ClientIdInterface::ClientIdInterface()
 {
     m_keyChars = "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\
             1234567890@!?$";
+    // calculate length of m_keyChars based on sizeof of char which
+    // should actually always be one byte, but it doesn't hurt to double
+	// check	
     m_keyCharLen = sizeof(m_keyChars)/sizeof(m_keyChars[0]);
-    m_file.setFileName(path);
+    m_file.setFileName("client_ids.dat");
     srand(time(NULL));
+    parseFile();
 }
 
 ClientIdInterface::~ClientIdInterface()
 {
     if (m_file.isOpen()) m_file.close();
+    if (m_instance != 0) delete m_instance;
+
+    delete m_mutex;
 }
 
 const QByteArray ClientIdInterface::getKeyForClient(const QString &clientId) const
@@ -37,6 +46,14 @@ void ClientIdInterface::setKeyForClient(const QString &clientId,
 {
     m_keys.insert(clientId, clientKey);
     saveKeyToFile(clientId, clientKey);
+}
+
+ClientIdInterface *ClientIdInterface::instance()
+{
+   QMutexLocker locker(m_mutex);
+   if (m_instance == 0)
+       m_instance = new ClientIdInterface();
+   return m_instance;
 }
 
 void ClientIdInterface::parseFile()

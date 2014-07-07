@@ -3,7 +3,7 @@
 RemoteMouseServer::RemoteMouseServer(QObject *parent) :
     QTcpServer(parent)
 {
-    m_ids = new ClientIdInterface("client_ids.dat", &m_idsMutex);
+    m_ids = ClientIdInterface::instance();
 }
 
 RemoteMouseServer::~RemoteMouseServer()
