@@ -2,6 +2,7 @@
 #define CLIENTIDKEYDIALOG_H
 
 #include <QDialog>
+#include <QMessageBox>
 #include "clientidinterface.h"
 
 namespace Ui {
@@ -16,8 +17,12 @@ public:
     explicit ClientIdKeyDialog(QWidget *parent = 0);
     ~ClientIdKeyDialog();
 
+    int exec();
+
 public slots:
     void generateKey();
+    void deleteId();
+    void addNewId();
     void accept();
     void reject();
     
@@ -25,7 +30,7 @@ private:
     Ui::ClientIdKeyDialog *ui;
     ClientIdInterface* m_ids;
 
-    void addNewId();
+    bool m_changeMade;
 };
 
 #endif // CLIENTIDKEYDIALOG_H

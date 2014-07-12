@@ -40,5 +40,5 @@ void MainWindow::stopServer()
 
 void MainWindow::editIds()
 {
-   m_idKeyDialog.show();
+   m_idKeyDialog.exec();
 }

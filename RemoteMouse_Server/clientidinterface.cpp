@@ -22,7 +22,7 @@ ClientIdInterface::~ClientIdInterface()
 const QByteArray ClientIdInterface::getKeyForClient(const QString &clientId)
 {
     QMutexLocker locker(&m_mutex);
-    QByteArray key = m_keys.value(clientId, "error");
+    QByteArray key = m_keys.value(clientId, "Error: ID does not exist!");
     return key;
 }
 
@@ -77,6 +77,7 @@ void ClientIdInterface::parseFile()
 void ClientIdInterface::saveKeyToFile(const QString& cliendId,
                                       const QByteArray& clientKey)
 {
+    // TODO: write over existing ID
     QMutexLocker locker(&m_mutex);
     m_file.open(QFile::Append);
     m_file.write(cliendId.toStdString().c_str(), MAXLEN);
