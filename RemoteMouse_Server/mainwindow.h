@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTableView>
 #include "remotemouseserver.h"
+#include "clientidkeydialog.h"
 
 #define LISTEN_PORT 48048
 
@@ -22,12 +23,14 @@ public:
 public slots:
     void startServer();
     void stopServer();
+    void editIds();
 
 private:
     QTableView* m_clients;
 
     RemoteMouseServer m_server;
     Ui::MainWindow *ui;
+    ClientIdKeyDialog m_idKeyDialog;
 };
 
 #endif // MAINWINDOW_H

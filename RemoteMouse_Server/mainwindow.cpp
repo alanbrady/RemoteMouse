@@ -9,8 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_clients = ui->table_clients;
 
-    connect(ui->button_start, SIGNAL(clicked()), this, SLOT(startServer()));
-    connect(ui->button_stop, SIGNAL(clicked()), this, SLOT(stopServer()));
+//    connect(ui->button_start, SIGNAL(clicked()), this, SLOT(startServer()));
+//    connect(ui->button_stop, SIGNAL(clicked()), this, SLOT(stopServer()));
 
     ui->statusBar->showMessage("Remote Mouse initialized.");
 }
@@ -36,4 +36,9 @@ void MainWindow::stopServer()
     m_server.close();
     ui->statusBar->showMessage("Server is not listening for connections.");
 
+}
+
+void MainWindow::editIds()
+{
+   m_idKeyDialog.show();
 }

@@ -50,6 +50,13 @@
         </property>
        </spacer>
       </item>
+      <item>
+       <widget class="QPushButton" name="editClientsButton">
+        <property name="text">
+         <string>Edit Clients</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
@@ -65,5 +72,59 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>button_start</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>startServer()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>36</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>39</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_stop</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>stopServer()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>49</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>53</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editClientsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editIds()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>37</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>52</x>
+     <y>182</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>startServer()</slot>
+  <slot>stopServer()</slot>
+  <slot>editIds()</slot>
+ </slots>
 </ui>
