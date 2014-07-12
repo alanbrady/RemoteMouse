@@ -1,7 +1,6 @@
 #include "clientidinterface.h"
 
 ClientIdInterface* ClientIdInterface::m_instance = new ClientIdInterface();
-//QMutex* ClientIdInterface::m_mutex = new QMutex();
 
 ClientIdInterface::ClientIdInterface()
 {
@@ -59,7 +58,6 @@ void ClientIdInterface::parseFile()
         if (strLen != -1) {
             int delimPos = getDelimPos(buffer, strLen, ':');
             if (delimPos != -1) {
-                // needs some double checking when I'm not exhausted
                 QString id = QString::fromLocal8Bit(buffer, delimPos);
                 QByteArray key = QByteArray::fromRawData(buffer+delimPos+1,
                                                      strLen-delimPos);
