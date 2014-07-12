@@ -18,13 +18,14 @@ public:
 
 public slots:
     void generateKey();
-    void addNewId();
     void accept();
     void reject();
     
 private:
     Ui::ClientIdKeyDialog *ui;
     ClientIdInterface* m_ids;
+
+    void addNewId();
 };
 
 #endif // CLIENTIDKEYDIALOG_H

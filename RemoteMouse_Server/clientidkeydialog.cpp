@@ -1,5 +1,6 @@
 #include "clientidkeydialog.h"
 #include "ui_clientidkeydialog.h"
+#include <QDebug>
 
 ClientIdKeyDialog::ClientIdKeyDialog(QWidget *parent) :
     QDialog(parent),
@@ -27,10 +28,12 @@ void ClientIdKeyDialog::addNewId()
 
 void ClientIdKeyDialog::accept()
 {
-    
+    hide();
+    qDebug() << "Saved.";
 }
 
 void ClientIdKeyDialog::reject()
-{
-    
+{ 
+    hide();
+    qDebug() << "Cancelled.";
 }
