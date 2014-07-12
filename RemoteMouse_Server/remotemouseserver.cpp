@@ -8,7 +8,6 @@ RemoteMouseServer::RemoteMouseServer(QObject *parent) :
 
 RemoteMouseServer::~RemoteMouseServer()
 {
-    delete m_ids;
 }
 
 void RemoteMouseServer::incomingConnection(qintptr handle)
