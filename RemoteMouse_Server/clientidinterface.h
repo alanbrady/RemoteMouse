@@ -36,10 +36,10 @@ class ClientIdInterface
 {
 public:
     ~ClientIdInterface();
-    const QByteArray getKeyForClient(const QString& clientId) const;
+    const QByteArray getKeyForClient(const QString& clientId);
     const QByteArray generateNewKey() const;
     void setKeyForClient(const QString& clientId, const QByteArray& clientKey);
-    int static getIdLen() { return ID_LEN; }
+    int getIdLen() { return ID_LEN; }
     static ClientIdInterface* instance();
 
 private:
@@ -53,7 +53,8 @@ private:
     unsigned int m_keyCharLen;
     QFile m_file;
     QHash<QString, QByteArray> m_keys;
-    static QMutex *m_mutex;
+    QMutex m_mutex;
+
     static ClientIdInterface *m_instance;
 
     void parseFile();

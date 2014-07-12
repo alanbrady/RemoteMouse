@@ -1,7 +1,7 @@
 #include "clientidinterface.h"
 
-ClientIdInterface* ClientIdInterface::m_instance = 0;
-QMutex* ClientIdInterface::m_mutex = new QMutex();
+ClientIdInterface* ClientIdInterface::m_instance = new ClientIdInterface();
+//QMutex* ClientIdInterface::m_mutex = new QMutex();
 
 ClientIdInterface::ClientIdInterface()
 {
@@ -18,23 +18,18 @@ ClientIdInterface::ClientIdInterface()
 
 ClientIdInterface::~ClientIdInterface()
 {
-    if (m_file.isOpen()) m_file.close();
-    if (m_instance != 0) delete m_instance;
-
-    delete m_mutex;
 }
 
-const QByteArray ClientIdInterface::getKeyForClient(const QString &clientId) const
+const QByteArray ClientIdInterface::getKeyForClient(const QString &clientId)
 {
-    QMutexLocker locker(m_mutex);
-    return m_keys.value(clientId, "error");
-
+    QMutexLocker locker(&m_mutex);
+    QByteArray key = m_keys.value(clientId, "error");
+    return key;
 }
 
 const QByteArray ClientIdInterface::generateNewKey() const
 {
-    QByteArray newKey;
-    newKey.resize(m_keyCharLen);
+    QByteArray newKey(m_keyCharLen, '\0');
     for (int i = 0; i < KEY_LEN; i++) {
         newKey[i] = m_keyChars[rand()%m_keyCharLen];
     }
@@ -50,15 +45,12 @@ void ClientIdInterface::setKeyForClient(const QString &clientId,
 
 ClientIdInterface *ClientIdInterface::instance()
 {
-   QMutexLocker locker(m_mutex);
-   if (m_instance == 0)
-       m_instance = new ClientIdInterface();
-   return m_instance;
+    return m_instance;
 }
 
 void ClientIdInterface::parseFile()
 {
-    QMutexLocker locker(m_mutex);
+    QMutexLocker locker(&m_mutex);
     m_file.open(QFile::ReadOnly);
     int bufferLen = MAXLEN*2+2;
     char* buffer = new char[bufferLen];
@@ -87,7 +79,7 @@ void ClientIdInterface::parseFile()
 void ClientIdInterface::saveKeyToFile(const QString& cliendId,
                                       const QByteArray& clientKey)
 {
-    QMutexLocker locker(m_mutex);
+    QMutexLocker locker(&m_mutex);
     m_file.open(QFile::Append);
     m_file.write(cliendId.toStdString().c_str(), MAXLEN);
     m_file.write(":", 1);
