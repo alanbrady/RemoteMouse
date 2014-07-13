@@ -82,7 +82,7 @@ ClientIdInterface *ClientIdInterface::instance()
 void ClientIdInterface::parseFile()
 {
     QMutexLocker locker(&m_mutex);
-    m_file.open(QFile::ReadOnly);
+    m_file.open(QFile::ReadOnly | QFile::Text);
     int bufferLen = MAXLEN*2+2;
     char* buffer = new char[bufferLen];
     while (m_file.isReadable()) {
@@ -121,6 +121,7 @@ void ClientIdInterface::saveKeyToFile(const QString& cliendId,
     data << idKey << clientKey << '\n';
     m_file.close();
     m_file.open(QFile::WriteOnly | QFile::Text);
+    data.seek(0);
     QTextStream out(&m_file);
     if (m_file.isWritable()) {
         while (!data.atEnd())
