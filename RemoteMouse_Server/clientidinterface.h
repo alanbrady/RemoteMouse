@@ -37,14 +37,14 @@ class ClientIdInterface
 {
 public:
     ~ClientIdInterface();
-    const QByteArray getKeyForClient(const QString& clientId);
-    const QByteArray generateNewKey() const;
-    void setKeyForClient(const QString& clientId, const QByteArray& clientKey);
+    const QString getKeyForClient(const QString& clientId);
+    const QString generateNewKey() const;
+    void setKeyForClient(const QString& clientId, const QString& clientKey);
     bool removeClient(const QString& clientId);
     int getIdLen() const { return ID_LEN; }
     static ClientIdInterface* instance();
     const QList<QString> getIdList() const;
-    const QList<QByteArray> getKeyList() const;
+    const QList<QString> getKeyList() const;
 
 private:
     // Constructors are made private to enforce singleton, access should be
@@ -56,13 +56,13 @@ private:
     const char *m_keyChars;
     unsigned int m_keyCharLen;
     QFile m_file;
-    QHash<QString, QByteArray> m_keys;
+    QHash<QString, QString> m_keys;
     QMutex m_mutex;
 
     static ClientIdInterface *m_instance;
 
     void parseFile();
-    void saveKeyToFile(const QString &cliendId, const QByteArray &clientKey);
+    void saveKeyToFile(const QString &cliendId, const QString &clientKey);
     int getDelimPos(const char* str, const int strLen, const char delim);
 };
 

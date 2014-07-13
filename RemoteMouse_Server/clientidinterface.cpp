@@ -19,24 +19,24 @@ ClientIdInterface::~ClientIdInterface()
 {
 }
 
-const QByteArray ClientIdInterface::getKeyForClient(const QString &clientId)
+const QString ClientIdInterface::getKeyForClient(const QString &clientId)
 {
     QMutexLocker locker(&m_mutex);
-    QByteArray key = m_keys.value(clientId, "Error: ID does not exist!");
+    QString key = m_keys.value(clientId, "Error: ID does not exist!");
     return key;
 }
 
-const QByteArray ClientIdInterface::generateNewKey() const
+const QString ClientIdInterface::generateNewKey() const
 {
-    QByteArray newKey(m_keyCharLen, '\0');
+    QString newKey = "";
     for (int i = 0; i < KEY_LEN; i++) {
-        newKey[i] = m_keyChars[rand()%m_keyCharLen];
+        newKey += m_keyChars[rand()%m_keyCharLen];
     }
     return newKey;
 }
 
 void ClientIdInterface::setKeyForClient(const QString &clientId,
-                                        const QByteArray &clientKey)
+                                        const QString &clientKey)
 {
     m_keys.insert(clientId, clientKey);
     saveKeyToFile(clientId, clientKey);
@@ -88,7 +88,7 @@ const QList<QString> ClientIdInterface::getIdList() const
     return m_keys.keys();
 }
 
-const QList<QByteArray> ClientIdInterface::getKeyList() const
+const QList<QString> ClientIdInterface::getKeyList() const
 {
     return m_keys.values();
 }
@@ -105,7 +105,7 @@ void ClientIdInterface::parseFile()
             int delimPos = getDelimPos(buffer, strLen, ':');
             if (delimPos != -1) {
                 QString id = QString::fromLocal8Bit(buffer, delimPos);
-                QByteArray key = QByteArray::fromRawData(buffer+delimPos+1,
+                QString key = QString::fromLocal8Bit(buffer+delimPos+1,
                                                      strLen-delimPos);
                 m_keys.insert(id, key);
             } else {
@@ -121,7 +121,7 @@ void ClientIdInterface::parseFile()
 }
 
 void ClientIdInterface::saveKeyToFile(const QString& cliendId,
-                                      const QByteArray& clientKey)
+                                      const QString& clientKey)
 {
     QMutexLocker locker(&m_mutex);
     m_file.open(QFile::ReadOnly | QFile::Text);

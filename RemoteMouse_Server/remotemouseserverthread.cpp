@@ -154,7 +154,7 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
     data += 8; // go past socket tag
     QString id = QString::fromLocal8Bit(data, idLen);
     data += idLen; // go past id
-    const QByteArray keyByteArray = m_ids->getKeyForClient(id);
+    const QByteArray keyByteArray = m_ids->getKeyForClient(id).toLocal8Bit();
     const char* key = keyByteArray.constData();
     const char* keyStart = key;
     int keyLen = keyByteArray.length();
