@@ -7,6 +7,7 @@
 #include <QHash>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QTextStream>
 #include <time.h>
 #include <stdlib.h>
 #define MAXLEN 50

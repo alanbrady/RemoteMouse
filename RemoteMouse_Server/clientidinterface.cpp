@@ -77,13 +77,25 @@ void ClientIdInterface::parseFile()
 void ClientIdInterface::saveKeyToFile(const QString& cliendId,
                                       const QByteArray& clientKey)
 {
-    // TODO: write over existing ID
     QMutexLocker locker(&m_mutex);
-    m_file.open(QFile::Append);
-    m_file.write(cliendId.toStdString().c_str(), MAXLEN);
-    m_file.write(":", 1);
-    m_file.write(clientKey, MAXLEN);
-    m_file.write("\n", 1);
+    m_file.open(QFile::ReadOnly | QFile::Text);
+    QTextStream data;
+    QString idKey = cliendId + ':';
+    while (m_file.canReadLine()) {
+        QString line = m_file.readLine();
+        if (!line.startsWith(idKey))
+            data << line;
+    }
+    data << idKey << clientKey << '\n';
+    m_file.close();
+    m_file.open(QFile::WriteOnly | QFile::Text);
+    QTextStream out(&m_file);
+    if (m_file.isWritable()) {
+        while (!data.atEnd())
+            out << data.readLine();
+    } else {
+        // error
+    }
     m_file.close();
 }
 
