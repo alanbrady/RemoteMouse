@@ -41,8 +41,10 @@ public:
     const QByteArray generateNewKey() const;
     void setKeyForClient(const QString& clientId, const QByteArray& clientKey);
     bool removeClient(const QString& clientId);
-    int getIdLen() { return ID_LEN; }
+    int getIdLen() const { return ID_LEN; }
     static ClientIdInterface* instance();
+    const QList<QString> getIdList() const;
+    const QList<QByteArray> getKeyList() const;
 
 private:
     // Constructors are made private to enforce singleton, access should be

@@ -83,6 +83,16 @@ ClientIdInterface *ClientIdInterface::instance()
     return m_instance;
 }
 
+const QList<QString> ClientIdInterface::getIdList() const
+{
+    return m_keys.keys();
+}
+
+const QList<QByteArray> ClientIdInterface::getKeyList() const
+{
+    return m_keys.values();
+}
+
 void ClientIdInterface::parseFile()
 {
     QMutexLocker locker(&m_mutex);
