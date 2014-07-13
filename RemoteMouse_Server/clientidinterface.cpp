@@ -102,14 +102,15 @@ void ClientIdInterface::saveKeyToFile(const QString& cliendId,
 int ClientIdInterface::getDelimPos(const char *str, const int strLen,
                                    const char delim)
 {
-    const char* endStr = str+strLen;
-    int pos = 0;
-    while (str != endStr) {
-        if ((*str) == delim)
+//    const char* endStr = str+strLen;
+    const char* strIter = str+strLen-1;
+    int pos = strLen-1;
+    while (strIter >= str) {
+        if ((*strIter) == delim)
             return pos;
         else {
-            pos++;
-            str++;
+            pos--;
+            strIter--;
         }
     }
     return -1;
