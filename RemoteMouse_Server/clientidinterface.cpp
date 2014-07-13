@@ -42,6 +42,38 @@ void ClientIdInterface::setKeyForClient(const QString &clientId,
     saveKeyToFile(clientId, clientKey);
 }
 
+bool ClientIdInterface::removeClient(const QString &clientId)
+{
+    QMutexLocker locker(&m_mutex);
+    bool clientFound = false;
+    m_file.open(QFile::ReadOnly | QFile::Text);
+    QTextStream data;
+    if (m_file.isReadable()) {
+        while (!m_file.atEnd()) {
+            QString line = m_file.readLine();
+            if (!line.startsWith(clientId + ':'))
+                data << m_file.readLine();
+            else
+                clientFound = true;
+        }
+    } else {
+        // error
+    }
+    m_file.close();
+    data.seek(0);
+    m_file.open(QFile::WriteOnly | QFile::Text);
+    QTextStream out(&m_file);
+    if (m_file.isWritable()) {
+        while (!data.atEnd()) {
+           out << data.readLine();
+        }
+    } else {
+        // error
+    }
+    m_file.close();
+    return clientFound;
+}
+
 ClientIdInterface *ClientIdInterface::instance()
 {
     return m_instance;
@@ -115,5 +147,3 @@ int ClientIdInterface::getDelimPos(const char *str, const int strLen,
     }
     return -1;
 }
-
-

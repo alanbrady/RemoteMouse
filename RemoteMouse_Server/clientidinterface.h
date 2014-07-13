@@ -40,6 +40,7 @@ public:
     const QByteArray getKeyForClient(const QString& clientId);
     const QByteArray generateNewKey() const;
     void setKeyForClient(const QString& clientId, const QByteArray& clientKey);
+    bool removeClient(const QString& clientId);
     int getIdLen() { return ID_LEN; }
     static ClientIdInterface* instance();
 
