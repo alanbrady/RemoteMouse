@@ -12,13 +12,22 @@ SOURCES += main.cpp\
     remotemouseserver.cpp \
     remotemouseserverthread.cpp \
     clientidinterface.cpp \
-    clientidkeydialog.cpp
+    clientidkeydialog.cpp \
+    addidchange.cpp \
+    renameidchange.cpp \
+    deleteidchange.cpp \
+    newkeychange.cpp
 
 HEADERS  += mainwindow.h \
     remotemouseserver.h \
     remotemouseserverthread.h \
     clientidinterface.h \
-    clientidkeydialog.h
+    clientidkeydialog.h \
+    abstractidkeychange.h \
+    addidchange.h \
+    renameidchange.h \
+    deleteidchange.h \
+    newkeychange.h
 
 FORMS    += mainwindow.ui \
     clientidkeydialog.ui

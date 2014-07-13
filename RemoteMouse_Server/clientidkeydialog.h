@@ -3,7 +3,14 @@
 
 #include <QDialog>
 #include <QMessageBox>
+#include <QQueue>
+#include <QInputDialog>
 #include "clientidinterface.h"
+#include "abstractidkeychange.h"
+#include "addidchange.h"
+#include "renameidchange.h"
+#include "deleteidchange.h"
+#include "newkeychange.h"
 
 namespace Ui {
 class ClientIdKeyDialog;
@@ -29,8 +36,11 @@ public slots:
 private:
     Ui::ClientIdKeyDialog *ui;
     ClientIdInterface* m_ids;
+    QQueue<AbstractIdKeyChange*> m_changes;
 
-    bool m_changeMade;
+    void initializeIdKeyTableData();
+    void clearChanges();
+    void applyChanges();
 };
 
 #endif // CLIENTIDKEYDIALOG_H
