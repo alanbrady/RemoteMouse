@@ -71,6 +71,10 @@ bool ClientIdInterface::removeClient(const QString &clientId)
         // error
     }
     m_file.close();
+
+    if (clientFound)
+        m_keys.remove(clientId);
+
     return clientFound;
 }
 
