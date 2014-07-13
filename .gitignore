@@ -21,7 +21,7 @@ Makefile*
 ui_*
 *.exe
 *.autosave
-*-build-*
+*build-*
 *object_script*
 
 
