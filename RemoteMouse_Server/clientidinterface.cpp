@@ -43,12 +43,13 @@ bool ClientIdInterface::removeClient(const QString &clientId)
     QMutexLocker locker(&m_mutex);
     bool clientFound = false;
     m_file.open(QFile::ReadOnly | QFile::Text);
-    QString data;
+//    QString data;
+    QVector<QString> data;
     if (m_file.isReadable()) {
         while (!m_file.atEnd()) {
             QString line = m_file.readLine();
             if (!line.startsWith(clientId + ':'))
-                data += m_file.readLine();
+                data.append(line);
             else
                 clientFound = true;
         }
@@ -60,15 +61,16 @@ bool ClientIdInterface::removeClient(const QString &clientId)
         m_file.open(QFile::WriteOnly | QFile::Text);
         QTextStream out(&m_file);
         if (m_file.isWritable()) {
-            out << data;
+            QVector<QString>::iterator iter;
+            for (iter = data.begin(); iter != data.end(); iter++) {
+                out << *iter;
+            }
         } else {
             // error
         }
         m_file.close();
-
+        m_keys.remove(clientId);
     }
-
-    m_keys.remove(clientId);
     return clientFound;
 }
 
@@ -121,19 +123,24 @@ void ClientIdInterface::saveKeyToFile(const QString& cliendId,
 {
     QMutexLocker locker(&m_mutex);
     m_file.open(QFile::ReadOnly | QFile::Text);
-    QString data;
+    QVector<QString> data;
     QString idKey = cliendId + ':';
     while (!m_file.atEnd()) {
         QString line = m_file.readLine();
-        if (!line.startsWith(idKey))
-            data += line;
+        if (!line.startsWith(idKey) && !line.isEmpty()) {
+//            data.append(line);
+            data.append(line);
+        }
     }
-    data = data + idKey + clientKey + '\n';
+    data.append(idKey + clientKey + '\n');
     m_file.close();
     m_file.open(QFile::WriteOnly | QFile::Text);
     QTextStream out(&m_file);
     if (m_file.isWritable()) {
-        out << data;
+        QVector<QString>::iterator iter;
+        for (iter = data.begin(); iter != data.end(); iter++) {
+            out << *iter;
+        }
     } else {
         // error
     }

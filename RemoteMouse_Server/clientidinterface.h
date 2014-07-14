@@ -5,6 +5,7 @@
 #include <QByteArray>
 #include <QFile>
 #include <QHash>
+#include <QVector>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QTextStream>
