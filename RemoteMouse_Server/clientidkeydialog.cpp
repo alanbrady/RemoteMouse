@@ -34,8 +34,8 @@ void ClientIdKeyDialog::generateKey()
         m_changes.append(change);
         ui->idKeyTable->item(selected->row(), 1)->setText(newKey);
     } else {
-        QMessageBox::information(this, "No ID Selected", "A client must be \
-                                 selected to generate a key");
+        QMessageBox::information(this, "No ID Selected",
+                                 "A client must be selected to generate a key");
     }
 
 }
@@ -50,8 +50,8 @@ void ClientIdKeyDialog::deleteId()
         m_changes.append(change);
         ui->idKeyTable->removeRow(selected->row());
     } else {
-        QMessageBox::information(this, "No ID Selected", "A client must be \
-                                 selected to generate a key");
+        QMessageBox::information(this, "No ID Selected",
+                                 "A client must be selected to generate a key");
     }
 }
 
