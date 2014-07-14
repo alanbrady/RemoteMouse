@@ -12,6 +12,10 @@ ClientIdKeyDialog::ClientIdKeyDialog(QWidget *parent) :
     m_ids = ClientIdInterface::instance();
 
     ui->idKeyTable->setColumnCount(2);
+    QStringList headerLabels;
+    headerLabels.append("Client ID");
+    headerLabels.append("Key");
+    ui->idKeyTable->setHorizontalHeaderLabels(headerLabels);
 }
 
 ClientIdKeyDialog::~ClientIdKeyDialog()
