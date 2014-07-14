@@ -41,6 +41,7 @@ public:
     const QString generateNewKey() const;
     void setKeyForClient(const QString& clientId, const QString& clientKey);
     bool removeClient(const QString& clientId);
+    bool idExists(const QString& id) const { return m_keys.contains(id); }
     int getIdLen() const { return ID_LEN; }
     static ClientIdInterface* instance();
     const QList<QString> getIdList() const;

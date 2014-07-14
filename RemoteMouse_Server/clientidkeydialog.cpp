@@ -24,7 +24,7 @@ void ClientIdKeyDialog::generateKey()
 {
     QList<QTableWidgetItem*> selection = ui->idKeyTable->selectedItems();
     if (!selection.isEmpty()) {
-        QTableWidgetItem* selected = ui->idKeyTable->selectedItems().at(0);
+        QTableWidgetItem* selected = selection.at(0);
         QString newKey = m_ids->generateNewKey();
         NewKeyChange* change = new NewKeyChange(selected->text(), newKey);
         m_changes.append(change);
@@ -45,6 +45,7 @@ void ClientIdKeyDialog::addNewId()
 {
     QString newId;
     bool result;
+    bool errorOccurred = false;
     do {
         newId = QInputDialog::getText(this, "Enter Name for New Client",
                                       "Client Name:", QLineEdit::Normal, QString(),
@@ -55,8 +56,17 @@ void ClientIdKeyDialog::addNewId()
             errorMsg += " characters.";
             QMessageBox::information(this, "Name Length too Long",
                                      errorMsg);
+            errorOccurred = true;
         }
-    } while ((newId.length() > m_ids->getIdLen()) || !result);
+
+        if (m_ids->idExists(newId)) {
+            QString errorMsg = "The name: ";
+            errorMsg += newId;
+            errorMsg += " already exists in the database.";
+            QMessageBox::information(this, "Name Already Exists", errorMsg);
+            errorOccurred = true;
+        }
+    } while (errorOccurred || !result);
 
     if (result) {
         int lastRow = ui->idKeyTable->rowCount();
@@ -74,6 +84,7 @@ void ClientIdKeyDialog::addNewId()
 int ClientIdKeyDialog::exec()
 {
     ui->idKeyTable->clearContents();
+    initializeIdKeyTableData();
     return QDialog::exec();
 }
 
@@ -91,8 +102,10 @@ void ClientIdKeyDialog::reject()
                                   "Are you sure you want to disregard changes?",
                                   QMessageBox::Ok | QMessageBox::Cancel,
                                   QMessageBox::Ok);
-        if (ret == QMessageBox::Ok)
-                QDialog::reject();
+        if (ret == QMessageBox::Ok) {
+            QDialog::reject();
+            clearChanges();
+        }
     } else
         QDialog::reject();
 

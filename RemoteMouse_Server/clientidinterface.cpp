@@ -4,12 +4,8 @@ ClientIdInterface* ClientIdInterface::m_instance = new ClientIdInterface();
 
 ClientIdInterface::ClientIdInterface()
 {
-    m_keyChars = "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\
-            1234567890@!?$";
-    // calculate length of m_keyChars based on sizeof of char which
-    // should actually always be one byte, but it doesn't hurt to double
-	// check	
-    m_keyCharLen = sizeof(m_keyChars)/sizeof(m_keyChars[0]);
+    m_keyChars = "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@!?$";
+    m_keyCharLen = strlen(m_keyChars);
     m_file.setFileName("client_ids.dat");
     srand(time(NULL));
     parseFile();
@@ -70,8 +66,9 @@ bool ClientIdInterface::removeClient(const QString &clientId)
         }
         m_file.close();
 
-        m_keys.remove(clientId);
     }
+
+    m_keys.remove(clientId);
     return clientFound;
 }
 
@@ -126,7 +123,7 @@ void ClientIdInterface::saveKeyToFile(const QString& cliendId,
     m_file.open(QFile::ReadOnly | QFile::Text);
     QString data;
     QString idKey = cliendId + ':';
-    while (m_file.canReadLine()) {
+    while (!m_file.atEnd()) {
         QString line = m_file.readLine();
         if (!line.startsWith(idKey))
             data += line;
