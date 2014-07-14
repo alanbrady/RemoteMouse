@@ -38,7 +38,17 @@ void ClientIdKeyDialog::generateKey()
 
 void ClientIdKeyDialog::deleteId()
 {
-//    m_changeMade = true;
+    QList<QTableWidgetItem*> selection = ui->idKeyTable->selectedItems();
+    if (!selection.isEmpty()) {
+        QTableWidgetItem* selected = selection.at(0);
+        QString clientId = selected->text();
+        DeleteIdChange* change = new DeleteIdChange(clientId);
+        m_changes.append(change);
+        ui->idKeyTable->removeRow(selected->row());
+    } else {
+        QMessageBox::information(this, "No ID Selected", "A client must be \
+                                 selected to generate a key");
+    }
 }
 
 void ClientIdKeyDialog::addNewId()
