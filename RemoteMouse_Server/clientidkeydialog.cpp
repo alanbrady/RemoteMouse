@@ -57,6 +57,7 @@ void ClientIdKeyDialog::addNewId()
     bool result;
     bool errorOccurred = false;
     do {
+        errorOccurred = false;
         newId = QInputDialog::getText(this, "Enter Name for New Client",
                                       "Client Name:", QLineEdit::Normal, QString(),
                                       &result, 0, Qt::ImhEmailCharactersOnly);
@@ -88,6 +89,49 @@ void ClientIdKeyDialog::addNewId()
         ui->idKeyTable->setItem(lastRow, 1, newItem);
         AddIdChange* change = new AddIdChange(newId, newKey);
         m_changes.append(change);
+    }
+}
+
+void ClientIdKeyDialog::renameId()
+{
+    QList<QTableWidgetItem*> selection = ui->idKeyTable->selectedItems();
+    if (!selection.isEmpty()) {
+        QTableWidgetItem* selected = selection.at(0);
+        QString oldId = selected->text();
+        QString newId;
+        bool result;
+        bool errorOccurred = false;
+        do {
+            errorOccurred = false;
+            newId = QInputDialog::getText(this, "Enter New Name",
+                                          "Client Name:", QLineEdit::Normal, QString(),
+                                          &result, 0, Qt::ImhEmailCharactersOnly);
+            if (newId.length() > m_ids->getIdLen()) {
+                QString errorMsg = "Name length must not exceed ";
+                errorMsg += m_ids->getIdLen();
+                errorMsg += " characters.";
+                QMessageBox::information(this, "Name Length too Long",
+                                         errorMsg);
+                errorOccurred = true;
+            }
+
+            if (m_ids->idExists(newId)) {
+                QString errorMsg = "The name: ";
+                errorMsg += newId;
+                errorMsg += " already exists in the database.";
+                QMessageBox::information(this, "Name Already Exists", errorMsg);
+                errorOccurred = true;
+            }
+        } while (errorOccurred || !result);
+
+        if (result) {
+            selected->setText(newId);
+            QString key = ui->idKeyTable->item(selected->row(), 1)->text();
+            RenameIdChange* change = new RenameIdChange(oldId, newId, key);
+            m_changes.append(change);
+        }
+    } else {
+        QMessageBox::information(this, "No ID Selected", "Select a Client ID to rename");
     }
 }
 

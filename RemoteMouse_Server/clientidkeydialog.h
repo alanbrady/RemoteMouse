@@ -30,6 +30,7 @@ public slots:
     void generateKey();
     void deleteId();
     void addNewId();
+    void renameId();
     void accept();
     void reject();
     
