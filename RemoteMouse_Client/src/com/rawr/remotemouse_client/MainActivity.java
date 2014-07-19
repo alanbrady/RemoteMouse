@@ -9,15 +9,15 @@ import java.math.*;
 
 public class MainActivity extends Activity {
 
-	private TextView mXText;
-	private TextView mYText;
-	private TextView mDXText;
-	private TextView mDYText;
-	private TextView mVelText;
+//	private TextView mXText;
+//	private TextView mYText;
+//	private TextView mDXText;
+//	private TextView mDYText;
+//	private TextView mVelText;
 
-	private float mLastX;
-	private float mLastY;
-	private long mLastTime;
+//	private float mLastX;
+//	private float mLastY;
+//	private long mLastTime;
 	
 	class CalcAndTransmitRunnable implements Runnable {
 		private float mX;
@@ -36,25 +36,25 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.server_info_layout);
 		
-		mXText = (TextView)findViewById(R.id.text_xedit);
-		mYText = (TextView)findViewById(R.id.text_yedit);
-		mDXText = (TextView)findViewById(R.id.text_dxedit);
-		mDYText = (TextView)findViewById(R.id.text_dyedit);
-		mVelText = (TextView)findViewById(R.id.text_veledit);
+//		mXText = (TextView)findViewById(R.id.text_xedit);
+//		mYText = (TextView)findViewById(R.id.text_yedit);
+//		mDXText = (TextView)findViewById(R.id.text_dxedit);
+//		mDYText = (TextView)findViewById(R.id.text_dyedit);
+//		mVelText = (TextView)findViewById(R.id.text_veledit);
 		
-		TrackpadView tp = (TrackpadView)findViewById(R.id.trackpad_view);
-		tp.setCallback(new TrackpadCallback() {
-			public void callback(MotionEvent e) {
+//		TrackpadView tp = (TrackpadView)findViewById(R.id.trackpad_view);
+//		tp.setCallback(new TrackpadCallback() {
+//			public void callback(MotionEvent e) {
 				// TODO: Reimplement thread - while playing with views
 				// this breaks concurrency without adding more scaffolding
 //				CalcAndTransmitRunnable runnable = new CalcAndTransmitRunnable(x, y);
 //				Thread task = new Thread(runnable);
 //				task.start();
-				calculateMousePhysics(e);
-			}
-		});
+//				calculateMousePhysics(e);
+//			}
+//		});
 	}
 
 	@Override
@@ -65,23 +65,23 @@ public class MainActivity extends Activity {
 	}
 	
 	private void calculateMousePhysics(MotionEvent e) {
-		mXText.setText(String.valueOf(e.getX()));
-		mYText.setText(String.valueOf(e.getY()));
-		long currTime = System.currentTimeMillis();
-		long dt = currTime - mLastTime;
-		if (e.getAction() != MotionEvent.ACTION_DOWN && dt != 0) {
-			float dx = mLastX - e.getX();
-			float dy = mLastY - e.getY();
-			double dxdt = dx/dt;
-			double dydt = dy/dt;
-			double vel = Math.sqrt(Math.pow(dxdt, 2) + Math.pow(dydt, 2));
-			mDXText.setText(String.valueOf(dx));
-			mDYText.setText(String.valueOf(dy));
-			mVelText.setText(String.valueOf(vel));
-			mLastX = e.getX();
-			mLastY = e.getY();
-			mLastTime = currTime;
-		}
+//		mXText.setText(String.valueOf(e.getX()));
+//		mYText.setText(String.valueOf(e.getY()));
+//		long currTime = System.currentTimeMillis();
+//		long dt = currTime - mLastTime;
+//		if (e.getAction() != MotionEvent.ACTION_DOWN && dt != 0) {
+//			float dx = mLastX - e.getX();
+//			float dy = mLastY - e.getY();
+//			double dxdt = dx/dt;
+//			double dydt = dy/dt;
+//			double vel = Math.sqrt(Math.pow(dxdt, 2) + Math.pow(dydt, 2));
+//			mDXText.setText(String.valueOf(dx));
+//			mDYText.setText(String.valueOf(dy));
+//			mVelText.setText(String.valueOf(vel));
+//			mLastX = e.getX();
+//			mLastY = e.getY();
+//			mLastTime = currTime;
+//		}
 		
 	}
 

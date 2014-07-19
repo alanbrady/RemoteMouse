@@ -58,7 +58,14 @@ containing a value of this type.
     }
     public static final class id {
         public static final int LinearLayout1=0x7f080000;
-        public static final int action_settings=0x7f08000c;
+        public static final int action_settings=0x7f080013;
+        public static final int button1=0x7f080012;
+        public static final int editText1=0x7f08000f;
+        public static final int editText2=0x7f080011;
+        public static final int server_ip=0x7f08000d;
+        public static final int textView1=0x7f08000c;
+        public static final int textView2=0x7f08000e;
+        public static final int textView3=0x7f080010;
         public static final int text_dxedit=0x7f080006;
         public static final int text_dxstatic=0x7f080005;
         public static final int text_dyedit=0x7f080008;
@@ -74,6 +81,7 @@ containing a value of this type.
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int sample_trackpad_view=0x7f030001;
+        public static final int server_info_layout=0x7f030002;
     }
     public static final class menu {
         public static final int main=0x7f070000;
@@ -99,12 +107,6 @@ containing a value of this type.
         AppBaseTheme from res/values/styles.xml on API 11+ devices.
     
  API 11 theme customizations can go here. 
-
-        Base application theme for API 14+. This theme completely replaces
-        AppBaseTheme from BOTH res/values/styles.xml and
-        res/values-v11/styles.xml on API 14+ devices.
-    
- API 14 theme customizations can go here. 
          */
         public static final int AppBaseTheme=0x7f060000;
         /**  Application theme. 
