@@ -3,6 +3,9 @@ package com.rawr.remotemouse_client;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.view.MotionEvent;
 import java.math.*;
@@ -38,6 +41,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.server_info_layout);
 		
+		
 //		mXText = (TextView)findViewById(R.id.text_xedit);
 //		mYText = (TextView)findViewById(R.id.text_yedit);
 //		mDXText = (TextView)findViewById(R.id.text_dxedit);
@@ -62,6 +66,14 @@ public class MainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	public void connect(View view) {
+		final EditText serverIpText = (EditText) findViewById(R.id.server_ip);
+		final EditText clientIdText = (EditText) findViewById(R.id.client_id);
+		final EditText clientKeyText = (EditText) findViewById(R.id.client_key);
+		
+		serverIpText.setText("Rawr!");
 	}
 	
 	private void calculateMousePhysics(MotionEvent e) {

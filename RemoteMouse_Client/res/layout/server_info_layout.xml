@@ -28,7 +28,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
-        android:id="@+id/editText1"
+        android:id="@+id/client_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10" />
@@ -41,15 +41,16 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/client_key"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/connectButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="connect"
         android:text="Connect" />
 
 </LinearLayout>
