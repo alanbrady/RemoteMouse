@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include <QTcpSocket>
+#include <QHostAddress>
 #include <QMutex>
 #include <QDataStream>
 #include <QCursor>
@@ -27,6 +28,7 @@ public:
 signals:
     void socketError(QTcpSocket::SocketError);
     void serverError(QString);
+    void statusMessage(QString);
 
 private:
     int m_socketDesc;
@@ -34,7 +36,8 @@ private:
     ClientIdInterface* m_ids;
     bool m_isVerified;
     QByteArray m_challenge;
-    QRect screenDims;
+    QRect m_screenDims;
+    QString m_peerAddress;
 
     void parseReadData(char* data);
     void parseMouseMoveData(char* data);

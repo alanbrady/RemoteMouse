@@ -3,16 +3,20 @@
 RemoteMouseServerThread::RemoteMouseServerThread(quintptr socketDesc,
                                                  ClientIdInterface *ids,
                                                  QObject *parent) :
-    QThread(parent), m_socketDesc(socketDesc), m_ids(ids),
+    QThread(parent), m_socketDesc(socketDesc), m_socket(0), m_ids(ids),
     m_isVerified(false)
 {
-    screenDims = QApplication::desktop()->screenGeometry();
+    m_screenDims = QApplication::desktop()->screenGeometry();
 }
 
 RemoteMouseServerThread::~RemoteMouseServerThread()
 {
-    if (m_socket != 0)
+    if (m_socket != 0) {
+        if (m_socket->isOpen()) {
+            m_socket->close();
+        }
         delete m_socket;
+    }
 
 }
 
@@ -23,12 +27,21 @@ void RemoteMouseServerThread::run()
     if (!m_socket->setSocketDescriptor(m_socketDesc)) {
         emit socketError(m_socket->error());
     } else {
-        while (m_socket->isOpen()) {
+        m_peerAddress = m_socket->peerAddress().toString();
+        QString status = "Client connected: ";
+        status += m_peerAddress;
+        emit statusMessage(status);
+        while (m_socket->state() == QAbstractSocket::ConnectedState) {
             m_socket->waitForReadyRead();
+            emit statusMessage("Request received.");
             char* data = new char[MAX_READ];
             int dataLen = m_socket->read(data, MAX_READ);
             if (dataLen != -1) {
                 parseReadData(data);
+            } else if (dataLen == 0) {
+                m_socket->close();
+                QString fail("Error: socket is closed");
+                emit serverError(fail);
             } else {
                 QString fail("Error: failed to read socket data");
                 emit serverError(fail);
@@ -40,10 +53,23 @@ void RemoteMouseServerThread::run()
 
 void RemoteMouseServerThread::parseReadData(char *data)
 {
+    QString status = "";
     if (strncmp(data, "CHAL_REQ", 8) == 0) {
+        status = "Challenge requested from: ";
+        status += m_peerAddress;
+        emit statusMessage(status);
         sendChallenge();
     } else if (strncmp(data, "CHAL_RSP", 8) == 0) {
+        status = "Challenge response received from: ";
+        status += m_peerAddress;
         m_isVerified = verifyResponse(data);
+        if (m_isVerified) {
+            status = "Client is verified: ";
+        } else {
+            status = "Client failed verification: ";
+        }
+        status += m_peerAddress;
+        emit statusMessage(status);
     } else if (strncmp(data, "MOUS_MOV", 8) == 0) {
         if (m_isVerified)
             parseMouseMoveData(data);
@@ -100,8 +126,8 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data)
 
     QDesktopWidget* desktop = QApplication::desktop();
     QCursor c = desktop->cursor();
-    int xDif = screenDims.x()*xPerc;
-    int yDif = screenDims.y()*yPerc;
+    int xDif = m_screenDims.x()*xPerc;
+    int yDif = m_screenDims.y()*yPerc;
     QPoint pos = desktop->mapToGlobal(c.pos());
     pos.setX(pos.x()+xDif);
     pos.setY(pos.y()+yDif);
@@ -123,7 +149,7 @@ void RemoteMouseServerThread::performMouseClick()
 void RemoteMouseServerThread::sendChallenge()
 {
     const QByteArray challenge = generateChallenge();
-    if (m_socket->isWritable()) {
+    if (m_socket->state() == QAbstractSocket::ConnectedState) {
         m_socket->write(challenge);
         m_socket->waitForBytesWritten();
     } else {

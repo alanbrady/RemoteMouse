@@ -14,6 +14,10 @@ public:
     explicit RemoteMouseServer(QObject *parent = 0);
     ~RemoteMouseServer();
 
+public slots:
+    void socketThreadMessage(QString str);
+    void socketThreadError(QString error);
+
 protected:
     void incomingConnection(qintptr handle);
 

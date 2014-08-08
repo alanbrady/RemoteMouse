@@ -43,15 +43,16 @@ public class SocketService extends Service {
 			try {
 				Log.e("socket_serv", "Connecting socket...");
 				m_socket = new Socket();
+				m_socket.setSoTimeout(5000);
 				m_socket.connect(new InetSocketAddress(m_ip, SERVER_PORT), 1000);
 				
 				Log.e("socket_serv", "Initializing input/output streams");
 				m_out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream())), true);
 				m_in = new BufferedReader(new InputStreamReader(m_socket.getInputStream()));
 				
-				Log.e("socket_serv", "Performing challenging validation");
-				String challenge = getChallenge();
-				if (challenge.length() > 0) {
+				Log.e("socket_serv", "Performing challenge validation");
+				char[] challenge = getChallenge();
+				if (challenge != null) {
 					sendChallengeResponse(challenge);
 				} else {
 					Log.e("socket_serv", "Failed to retreive challenge");
@@ -82,19 +83,20 @@ public class SocketService extends Service {
 		new Thread(new ConnectRunnable()).start();
 	}
 	
-	private String getChallenge() {
-		m_out.write("CHAL_REQ");
+	private char[] getChallenge() {
+		m_out.println("CHAL_REQ");
 		try {
-			String chal = m_in.readLine();
-			return chal;
+			char[] buf = new char[256];
+			m_in.read(buf, 0, 256);
+			return buf;
 		} catch(IOException e) {
 			Log.e("socket_serv", "IOException: " + e.toString());
 		}
-		return "";
+		return null;
 	}
 	
-	private void sendChallengeResponse(String challenge) {
-		int chalLen = challenge.length();
+	private void sendChallengeResponse(char[] challenge) {
+		int chalLen = challenge.length;
 		int keyLen = m_key.length();
 		byte[] hash = new byte[keyLen];
 		int k = 0;
@@ -102,8 +104,8 @@ public class SocketService extends Service {
 			if (k >= keyLen) {
 				k = 0;
 			}
-			hash[k] = (byte)(((byte)challenge.charAt(i)) ^ ((byte)m_key.charAt(k)) ^ hash[k]);
+			hash[k] = (byte)(((byte)challenge[i]) ^ ((byte)m_key.charAt(k)) ^ hash[k]);
 		}
-		m_out.print("CHAL_RSP" + hash);
+		m_out.println("CHAL_RSP" + hash);
 	}
 }
