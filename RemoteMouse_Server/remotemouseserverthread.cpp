@@ -178,9 +178,10 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
         *(hashed) = (*(challenge++)) ^ (*(key++)) ^ (*hashed);
         hashed++;
     }
-    bool isEqual = false;
-    if (strncmp(response, hashed, keyLen) == 0)
-        isEqual = true;
+//    bool isEqual = false;
+//    if (strncmp(response, hashed, keyLen) == 0)
+//        isEqual = true;
+    bool isEqual = (strncmp(response,hashed,keyLen) == 0);
 
     delete[] hashed;
     return isEqual;

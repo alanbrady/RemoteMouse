@@ -32,6 +32,7 @@
  *
  * WISHFUL THINKING:
  *  - encrypt id/key file
+ *  - update random function to utilize awesome new <random> in C++11
  */
 
 class ClientIdInterface
