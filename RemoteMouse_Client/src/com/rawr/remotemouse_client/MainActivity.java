@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
+import android.content.Intent;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -73,7 +75,13 @@ public class MainActivity extends Activity {
 		final EditText clientIdText = (EditText) findViewById(R.id.client_id);
 		final EditText clientKeyText = (EditText) findViewById(R.id.client_key);
 		
-		serverIpText.setText("Rawr!");
+		Intent connectScreen = new Intent(getApplicationContext(), ConnectActivity.class);
+		connectScreen.putExtra("ip", serverIpText.getText().toString());
+		connectScreen.putExtra("id", clientIdText.getText().toString());
+		connectScreen.putExtra("key", clientKeyText.getText().toString());
+		Log.e("n", "Attempting to connect to: " + serverIpText.getText());
+		Log.e("n", "Id: " + clientIdText.getText() + " Key: " + clientKeyText.getText());
+		startActivity(connectScreen);
 	}
 	
 	private void calculateMousePhysics(MotionEvent e) {
