@@ -1,11 +1,13 @@
 package com.rawr.remotemouse_client;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.InetAddress;
@@ -23,7 +25,8 @@ public class SocketService extends Service {
 	private SocketCallback m_callback = null;
 	private Socket m_socket;
 	private final IBinder m_binder = new SocketBinder();
-	private PrintWriter m_out = null;
+//	private PrintWriter m_out = null;
+	private BufferedOutputStream m_out = null;
 	private BufferedReader m_in = null;
 	
 	private final int SERVER_PORT = 48048;
@@ -47,7 +50,8 @@ public class SocketService extends Service {
 				m_socket.connect(new InetSocketAddress(m_ip, SERVER_PORT), 1000);
 				
 				Log.e("socket_serv", "Initializing input/output streams");
-				m_out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream())), true);
+//				m_out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream())), true);
+				m_out = new BufferedOutputStream(m_socket.getOutputStream());
 				m_in = new BufferedReader(new InputStreamReader(m_socket.getInputStream()));
 				
 				Log.e("socket_serv", "Performing challenge validation");
@@ -84,7 +88,15 @@ public class SocketService extends Service {
 	}
 	
 	private char[] getChallenge() {
-		m_out.println("CHAL_REQ");
+//		m_out.println("CHAL_REQ");
+		try {
+			m_out.write("CHAL_REQ\n".getBytes("ASCII"));
+			m_out.flush();
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		try {
 			char[] buf = new char[256];
 			m_in.read(buf, 0, 256);
@@ -106,6 +118,22 @@ public class SocketService extends Service {
 			}
 			hash[k] = (byte)(((byte)challenge[i]) ^ ((byte)m_key.charAt(k)) ^ hash[k]);
 		}
-		m_out.println("CHAL_RSP" + hash);
+//		m_out.print("CHAL_RSP");
+		try {
+			m_out.write("CHAL_RSP".getBytes("ASCII"));
+			m_out.write((byte)m_id.length());
+//			m_out.print((byte)m_id.length());
+//			m_out.print(m_id);
+			m_out.write(m_id.getBytes("ASCII"));
+			m_out.write(hash);
+			m_out.write('\n');
+			m_out.flush();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		
 	}
 }
