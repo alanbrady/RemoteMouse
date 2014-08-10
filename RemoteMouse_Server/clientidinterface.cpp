@@ -4,7 +4,7 @@ ClientIdInterface* ClientIdInterface::m_instance = new ClientIdInterface();
 
 ClientIdInterface::ClientIdInterface()
 {
-    m_keyChars = "abcdefghijklmopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@!?$";
+    m_keyChars = "abcdefghjkmopqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ123456789@!?$";
     m_keyCharLen = strlen(m_keyChars);
     m_file.setFileName("client_ids.dat");
     srand(time(NULL));
@@ -103,7 +103,7 @@ void ClientIdInterface::parseFile()
                 if (delimPos != -1) {
                     QString id = QString::fromLocal8Bit(buffer, delimPos);
                     QString key = QString::fromLocal8Bit(buffer+delimPos+1,
-                                                     strLen-delimPos);
+                                                     strLen-delimPos-2);
                     m_keys.insert(id, key);
                 } else {
                 // error
