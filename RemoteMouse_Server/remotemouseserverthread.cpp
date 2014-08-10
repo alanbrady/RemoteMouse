@@ -152,12 +152,13 @@ void RemoteMouseServerThread::performMouseClick()
 
 void RemoteMouseServerThread::sendChallenge()
 {
-    const QByteArray challenge = generateChallenge();
+//    const QByteArray challenge = generateChallenge();
+    generateChallenge();
     if (m_socket->state() == QAbstractSocket::ConnectedState) {
-        m_socket->write(challenge);
+        m_socket->write(m_challenge, CHALLENGE_LEN);
         m_socket->waitForBytesWritten();
     } else {
-        QString fail("Error: socket is not writable");
+        QString fail("Error: socket is not connected!");
         emit serverError(fail);
     }
 }
@@ -165,15 +166,16 @@ void RemoteMouseServerThread::sendChallenge()
 // randomly generate a sequence of characters
 // IDEA: random challenge length, right now it's static but I not sure if that
 //       makes a huge difference
-const QByteArray RemoteMouseServerThread::generateChallenge()
+void RemoteMouseServerThread::generateChallenge()
 {
     QByteArray data;
     QDataStream stream(&data, QIODevice::WriteOnly);
     for (int i = 0; i < CHALLENGE_LEN; i++) {
-        stream << static_cast<char>(qrand() * 255);
+//        stream << static_cast<char>(qrand() * 255);
+        m_challenge[i] = (qrand()*255);
     }
-    m_challenge = data;
-    return data;
+//    m_challenge = data;
+//    return data;
 }
 
 // response data is in the form {(id)(repsonse)}
@@ -199,7 +201,7 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
     char* response = new char[keyLen];
     strncpy(response, data, keyLen);
 
-    const char* challenge = m_challenge.constData();
+    const char* challenge = m_challenge;
     const char* challengeEnd = challenge + CHALLENGE_LEN;
     while (challenge != challengeEnd) {
         if (hashed == hashEnd) {

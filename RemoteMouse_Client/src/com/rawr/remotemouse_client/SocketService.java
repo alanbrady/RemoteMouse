@@ -117,6 +117,7 @@ public class SocketService extends Service {
 				k = 0;
 			}
 			hash[k] = (byte)(((byte)challenge[i]) ^ ((byte)m_key.charAt(k)) ^ hash[k]);
+			k++;
 		}
 //		m_out.print("CHAL_RSP");
 		try {
