@@ -35,16 +35,20 @@ void RemoteMouseServerThread::run()
             m_socket->waitForReadyRead();
             emit statusMessage("Request received.");
             char* data = new char[MAX_READ];
-            int dataLen = m_socket->read(data, MAX_READ);
-            if (dataLen != -1) {
-                parseReadData(data);
+
+            int dataLen = 0;
+            if (m_socket->isOpen()) {
+                dataLen = m_socket->read(data, MAX_READ);
+            }
+            if (dataLen == -1) {
+                QString fail("Error: failed to read socket data");
+                emit serverError(fail);
             } else if (dataLen == 0) {
                 m_socket->close();
                 QString fail("Error: socket is closed");
                 emit serverError(fail);
             } else {
-                QString fail("Error: failed to read socket data");
-                emit serverError(fail);
+                parseReadData(data);
             }
             delete[] data;
         }
@@ -176,8 +180,9 @@ const QByteArray RemoteMouseServerThread::generateChallenge()
 bool RemoteMouseServerThread::verifyResponse(const char *data)
 {
     char* hashed;
-    int idLen = m_ids->getIdLen();
     data += 8; // go past socket tag
+    int idLen = char(*(data));
+    data++;
     QString id = QString::fromLocal8Bit(data, idLen);
     data += idLen; // go past id
     const QByteArray keyByteArray = m_ids->getKeyForClient(id).toLocal8Bit();
