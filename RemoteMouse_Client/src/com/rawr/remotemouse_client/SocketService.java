@@ -1,16 +1,17 @@
 package com.rawr.remotemouse_client;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+//import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+//import java.io.OutputStreamWriter;
+//import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.InetAddress;
+//import java.net.InetAddress;
 
 import android.app.Service;
 import android.content.Intent;
@@ -27,7 +28,7 @@ public class SocketService extends Service {
 	private final IBinder m_binder = new SocketBinder();
 //	private PrintWriter m_out = null;
 	private BufferedOutputStream m_out = null;
-	private BufferedReader m_in = null;
+	private BufferedInputStream m_in = null;
 	
 	private final int SERVER_PORT = 48048;
 	
@@ -52,10 +53,10 @@ public class SocketService extends Service {
 				Log.e("socket_serv", "Initializing input/output streams");
 //				m_out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream())), true);
 				m_out = new BufferedOutputStream(m_socket.getOutputStream());
-				m_in = new BufferedReader(new InputStreamReader(m_socket.getInputStream()));
+				m_in = new BufferedInputStream(m_socket.getInputStream());
 				
 				Log.e("socket_serv", "Performing challenge validation");
-				char[] challenge = getChallenge();
+				byte[] challenge = getChallenge();
 				if (challenge != null) {
 					sendChallengeResponse(challenge);
 				} else {
@@ -87,7 +88,7 @@ public class SocketService extends Service {
 		new Thread(new ConnectRunnable()).start();
 	}
 	
-	private char[] getChallenge() {
+	private byte[] getChallenge() {
 //		m_out.println("CHAL_REQ");
 		try {
 			m_out.write("CHAL_REQ\n".getBytes("ASCII"));
@@ -98,7 +99,7 @@ public class SocketService extends Service {
 			e1.printStackTrace();
 		}
 		try {
-			char[] buf = new char[256];
+			byte[] buf = new byte[256];
 			m_in.read(buf, 0, 256);
 			return buf;
 		} catch(IOException e) {
@@ -107,16 +108,20 @@ public class SocketService extends Service {
 		return null;
 	}
 	
-	private void sendChallengeResponse(char[] challenge) {
+	private void sendChallengeResponse(byte[] challenge) {
+//		String chalStr = new String(challenge);
+//		Log.e("debug", "Challenge Recvd: " + chalStr);
 		int chalLen = challenge.length;
 		int keyLen = m_key.length();
 		byte[] hash = new byte[keyLen];
+		byte[] keyBytes = strToBytes(m_key);
 		int k = 0;
 		for (int i = 0; i < chalLen; i++) {
 			if (k >= keyLen) {
 				k = 0;
 			}
-			hash[k] = (byte)(((byte)challenge[i]) ^ ((byte)m_key.charAt(k)) ^ hash[k]);
+//			hash[k] = (byte)(((byte)challenge[i] ^ (byte)m_key.charAt(k)) ^ hash[k]);
+			hash[k] = (byte)((challenge[i] ^ keyBytes[k]) ^ hash[k]);
 			k++;
 		}
 //		m_out.print("CHAL_RSP");
@@ -136,5 +141,16 @@ public class SocketService extends Service {
 		}
 
 		
+	}
+	
+	private byte[] strToBytes(String str) {
+		char[] chars = str.toCharArray();
+		byte[] bytes = new byte[str.length()];
+		
+		for (int i = 0; i < str.length(); i++) {
+			bytes[i] = (byte)chars[i];
+		}
+		
+		return bytes;
 	}
 }

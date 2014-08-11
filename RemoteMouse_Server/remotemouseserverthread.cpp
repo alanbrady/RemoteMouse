@@ -7,6 +7,7 @@ RemoteMouseServerThread::RemoteMouseServerThread(quintptr socketDesc,
     m_isVerified(false)
 {
     m_screenDims = QApplication::desktop()->screenGeometry();
+
 }
 
 RemoteMouseServerThread::~RemoteMouseServerThread()
@@ -156,6 +157,7 @@ void RemoteMouseServerThread::sendChallenge()
     generateChallenge();
     if (m_socket->state() == QAbstractSocket::ConnectedState) {
         m_socket->write(m_challenge, CHALLENGE_LEN);
+        m_socket->flush();
         m_socket->waitForBytesWritten();
     } else {
         QString fail("Error: socket is not connected!");
@@ -168,14 +170,11 @@ void RemoteMouseServerThread::sendChallenge()
 //       makes a huge difference
 void RemoteMouseServerThread::generateChallenge()
 {
-    QByteArray data;
-    QDataStream stream(&data, QIODevice::WriteOnly);
+    srand(time(NULL));
     for (int i = 0; i < CHALLENGE_LEN; i++) {
-//        stream << static_cast<char>(qrand() * 255);
-        m_challenge[i] = (qrand()*255);
+        m_challenge[i] = rand() % 256;
     }
-//    m_challenge = data;
-//    return data;
+//    qDebug() << "Challenge created: " << m_challenge;
 }
 
 // response data is in the form {(id)(repsonse)}
@@ -194,9 +193,8 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
 
     hashed = new char[keyLen];
     char* hashStart = hashed;
-    char* hashEnd = hashed+8;
-    while (hashed != hashEnd) *(hashed++) = '0';
-    hashed = hashStart;
+    char* hashEnd = hashed+keyLen;
+    memset(hashed, 0, keyLen*sizeof(char));
 
     char* response = new char[keyLen];
     strncpy(response, data, keyLen);
@@ -208,12 +206,10 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
             hashed = hashStart;
             key = keyStart;
         }
-        *(hashed) = (*(challenge++)) ^ (*(key++)) ^ (*hashed);
-        hashed++;
+        (*hashed) = ((*challenge) ^ (*key)) ^ (*hashed);
+        key++; challenge++; hashed++;
     }
-//    bool isEqual = false;
-//    if (strncmp(response, hashed, keyLen) == 0)
-//        isEqual = true;
+    hashed = hashStart;
     bool isEqual = (strncmp(response,hashed,keyLen) == 0);
 
     delete[] hashed;

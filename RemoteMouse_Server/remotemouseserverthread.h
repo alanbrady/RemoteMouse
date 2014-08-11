@@ -1,6 +1,9 @@
 #ifndef REMOTEMOUSESERVERTHREAD_H
 #define REMOTEMOUSESERVERTHREAD_H
 
+#include <stdlib.h>
+#include <time.h>
+
 #include <QThread>
 #include <QTcpSocket>
 #include <QHostAddress>
