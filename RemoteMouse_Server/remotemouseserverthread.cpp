@@ -157,6 +157,7 @@ void RemoteMouseServerThread::sendChallenge()
     generateChallenge();
     if (m_socket->state() == QAbstractSocket::ConnectedState) {
         m_socket->write(m_challenge, CHALLENGE_LEN);
+        m_socket->write("\n");
         m_socket->flush();
         m_socket->waitForBytesWritten();
     } else {
@@ -168,13 +169,21 @@ void RemoteMouseServerThread::sendChallenge()
 // randomly generate a sequence of characters
 // IDEA: random challenge length, right now it's static but I not sure if that
 //       makes a huge difference
+// challenge cannot include '\n' because that is the terminating character for
+// the client to determine the end of the challenge string.  A better
+// implementation would be to transmit the length of the challenge string
+// to the client.  This would also more aptly allow a variable length challenge
+// string.
 void RemoteMouseServerThread::generateChallenge()
 {
     srand(time(NULL));
     for (int i = 0; i < CHALLENGE_LEN; i++) {
-        m_challenge[i] = rand() % 256;
+        int k = 0;
+        do {
+            k = rand() % 256;
+        } while (k == '\n');
+        m_challenge[i] = k;
     }
-//    qDebug() << "Challenge created: " << m_challenge;
 }
 
 // response data is in the form {(id)(repsonse)}
@@ -197,7 +206,7 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
     memset(hashed, 0, keyLen*sizeof(char));
 
     char* response = new char[keyLen];
-    strncpy(response, data, keyLen);
+    memcpy(response, data, keyLen);
 
     const char* challenge = m_challenge;
     const char* challengeEnd = challenge + CHALLENGE_LEN;
@@ -210,7 +219,7 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
         key++; challenge++; hashed++;
     }
     hashed = hashStart;
-    bool isEqual = (strncmp(response,hashed,keyLen) == 0);
+    bool isEqual = (memcmp(response,hashed,keyLen) == 0);
 
     delete[] hashed;
     return isEqual;

@@ -2,16 +2,10 @@ package com.rawr.remotemouse_client;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-//import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-//import java.io.OutputStreamWriter;
-//import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-//import java.net.InetAddress;
 
 import android.app.Service;
 import android.content.Intent;
@@ -26,7 +20,6 @@ public class SocketService extends Service {
 	private SocketCallback m_callback = null;
 	private Socket m_socket;
 	private final IBinder m_binder = new SocketBinder();
-//	private PrintWriter m_out = null;
 	private BufferedOutputStream m_out = null;
 	private BufferedInputStream m_in = null;
 	
@@ -51,7 +44,6 @@ public class SocketService extends Service {
 				m_socket.connect(new InetSocketAddress(m_ip, SERVER_PORT), 1000);
 				
 				Log.e("socket_serv", "Initializing input/output streams");
-//				m_out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream())), true);
 				m_out = new BufferedOutputStream(m_socket.getOutputStream());
 				m_in = new BufferedInputStream(m_socket.getInputStream());
 				
@@ -89,7 +81,6 @@ public class SocketService extends Service {
 	}
 	
 	private byte[] getChallenge() {
-//		m_out.println("CHAL_REQ");
 		try {
 			m_out.write("CHAL_REQ\n".getBytes("ASCII"));
 			m_out.flush();
@@ -109,9 +100,7 @@ public class SocketService extends Service {
 	}
 	
 	private void sendChallengeResponse(byte[] challenge) {
-//		String chalStr = new String(challenge);
-//		Log.e("debug", "Challenge Recvd: " + chalStr);
-		int chalLen = challenge.length;
+		int chalLen = getChallengeLength(challenge);
 		int keyLen = m_key.length();
 		byte[] hash = new byte[keyLen];
 		byte[] keyBytes = strToBytes(m_key);
@@ -120,16 +109,12 @@ public class SocketService extends Service {
 			if (k >= keyLen) {
 				k = 0;
 			}
-//			hash[k] = (byte)(((byte)challenge[i] ^ (byte)m_key.charAt(k)) ^ hash[k]);
 			hash[k] = (byte)((challenge[i] ^ keyBytes[k]) ^ hash[k]);
 			k++;
 		}
-//		m_out.print("CHAL_RSP");
 		try {
 			m_out.write("CHAL_RSP".getBytes("ASCII"));
 			m_out.write((byte)m_id.length());
-//			m_out.print((byte)m_id.length());
-//			m_out.print(m_id);
 			m_out.write(m_id.getBytes("ASCII"));
 			m_out.write(hash);
 			m_out.write('\n');
@@ -152,5 +137,13 @@ public class SocketService extends Service {
 		}
 		
 		return bytes;
+	}
+	
+	private int getChallengeLength(byte[] challenge) {
+		int i = 0;
+		while (challenge[i] != '\n' && i < challenge.length) {
+			i++;
+		}
+		return i;
 	}
 }

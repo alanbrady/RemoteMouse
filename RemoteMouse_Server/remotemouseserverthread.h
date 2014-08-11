@@ -38,7 +38,6 @@ private:
     QTcpSocket* m_socket;
     ClientIdInterface* m_ids;
     bool m_isVerified;
-//    QByteArray m_challenge;
     char m_challenge[CHALLENGE_LEN];
     QRect m_screenDims;
     QString m_peerAddress;
