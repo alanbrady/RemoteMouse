@@ -49,6 +49,11 @@ private:
     void generateChallenge();
     bool verifyResponse(const char *data);
 
+private slots:
+    void socketReadyRead();
+    void createSocket();
+//    void socketStateChanged(QAbstractSocket::SocketState socketState);
+
 };
 
 #endif // REMOTEMOUSESERVERTHREAD_H

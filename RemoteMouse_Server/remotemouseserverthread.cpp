@@ -23,37 +23,7 @@ RemoteMouseServerThread::~RemoteMouseServerThread()
 
 void RemoteMouseServerThread::run()
 {
-    m_socket = new QTcpSocket();
-
-    if (!m_socket->setSocketDescriptor(m_socketDesc)) {
-        emit socketError(m_socket->error());
-    } else {
-        m_peerAddress = m_socket->peerAddress().toString();
-        QString status = "Client connected: ";
-        status += m_peerAddress;
-        emit statusMessage(status);
-        while (m_socket->state() == QAbstractSocket::ConnectedState) {
-            m_socket->waitForReadyRead();
-            emit statusMessage("Request received.");
-            char* data = new char[MAX_READ];
-
-            int dataLen = 0;
-            if (m_socket->isOpen()) {
-                dataLen = m_socket->read(data, MAX_READ);
-            }
-            if (dataLen == -1) {
-                QString fail("Error: failed to read socket data");
-                emit serverError(fail);
-            } else if (dataLen == 0) {
-                m_socket->close();
-                QString fail("Error: socket is closed");
-                emit serverError(fail);
-            } else {
-                parseReadData(data);
-            }
-            delete[] data;
-        }
-    }
+    exec();
 }
 
 void RemoteMouseServerThread::parseReadData(char *data)
@@ -223,5 +193,42 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
 
     delete[] hashed;
     return isEqual;
+}
+
+void RemoteMouseServerThread::socketReadyRead()
+{
+    emit statusMessage("Request received.");
+    qint64 bytes = m_socket->bytesAvailable();
+    char* data = new char[bytes];
+
+    int dataLen = 0;
+    if (m_socket->isOpen()) {
+        dataLen = m_socket->read(data, bytes);
+    }
+    if (dataLen == -1) {
+        QString fail("Error: failed to read socket data");
+        emit serverError(fail);
+    } else {
+        parseReadData(data);
+    }
+
+    delete[] data;
+}
+
+void RemoteMouseServerThread::createSocket()
+{
+    m_socket = new QTcpSocket(this);
+    if (!m_socket->setSocketDescriptor(m_socketDesc)) {
+        emit socketError(m_socket->error());
+    } else {
+        connect(m_socket, SIGNAL(readyRead()),
+                this, SLOT(socketReadyRead()));
+        connect(m_socket, SIGNAL(disconnected()),
+                this, SLOT(quit()));
+        m_peerAddress = m_socket->peerAddress().toString();
+        QString status = "Socket initialized: ";
+        status += m_peerAddress;
+        emit statusMessage(status);
+    }
 }
 
