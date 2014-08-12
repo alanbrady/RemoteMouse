@@ -50,7 +50,7 @@ void RemoteMouseServer::threadFinished()
 {
     RemoteMouseServerThread* thread = dynamic_cast<RemoteMouseServerThread*>(sender());
     if (thread != 0) {
-        if (clientThreads.removeAll(thread) == 0)
-            qDebug() << "Failed to remove thread.";
+        clientThreads.removeAll(thread);
+        delete thread;
     }
 }
