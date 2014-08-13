@@ -18,7 +18,7 @@ RemoteMouseServer::~RemoteMouseServer()
 
 void RemoteMouseServer::socketThreadMessage(QString str)
 {
-    qDebug() << "Rcvd: " << str;
+    qDebug() << str;
 }
 
 void RemoteMouseServer::socketThreadError(QString error)

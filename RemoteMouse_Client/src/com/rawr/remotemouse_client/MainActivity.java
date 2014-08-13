@@ -6,11 +6,11 @@ import android.view.Menu;
 import android.view.View;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Button;
+//import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.view.MotionEvent;
-import java.math.*;
+//import android.widget.TextView;
+//import android.view.MotionEvent;
+//import java.math.*;
 
 public class MainActivity extends Activity {
 
@@ -25,13 +25,13 @@ public class MainActivity extends Activity {
 //	private long mLastTime;
 	
 	class CalcAndTransmitRunnable implements Runnable {
-		private float mX;
-		private float mY;
+//		private float mX;
+//		private float mY;
 		
-		public CalcAndTransmitRunnable(float x, float y) {
-			mX = x;
-			mY = y;
-		}
+//		public CalcAndTransmitRunnable(float x, float y) {
+//			mX = x;
+//			mY = y;
+//		}
 		
 		public void run() {
 //			calculateMousePhysics();
@@ -84,7 +84,7 @@ public class MainActivity extends Activity {
 		startActivity(connectScreen);
 	}
 	
-	private void calculateMousePhysics(MotionEvent e) {
+//	private void calculateMousePhysics(MotionEvent e) {
 //		mXText.setText(String.valueOf(e.getX()));
 //		mYText.setText(String.valueOf(e.getY()));
 //		long currTime = System.currentTimeMillis();
@@ -103,6 +103,6 @@ public class MainActivity extends Activity {
 //			mLastTime = currTime;
 //		}
 		
-	}
+//	}
 
 }

@@ -18,6 +18,7 @@ public class SocketService extends Service {
 	private String m_id;
 	private String m_key;
 	private SocketCallback m_callback = null;
+	private StatusCallback m_statusCallback = null;
 	private Socket m_socket;
 	private final IBinder m_binder = new SocketBinder();
 	private BufferedOutputStream m_out = null;
@@ -40,21 +41,25 @@ public class SocketService extends Service {
 			try {
 				Log.e("socket_serv", "Connecting socket...");
 				m_socket = new Socket();
-				m_socket.setSoTimeout(5000);
+				m_socket.setSoTimeout(10000);
 				m_socket.connect(new InetSocketAddress(m_ip, SERVER_PORT), 1000);
 				
-				Log.e("socket_serv", "Initializing input/output streams");
+				Log.d("socket_serv", "Initializing input/output streams");
 				m_out = new BufferedOutputStream(m_socket.getOutputStream());
 				m_in = new BufferedInputStream(m_socket.getInputStream());
 				
-				Log.e("socket_serv", "Performing challenge validation");
+				Log.d("socket_serv", "Performing challenge validation");
+				issueNewStatus("Validating Key...");
 				byte[] challenge = getChallenge();
 				if (challenge != null) {
+					issueNewStatus("Challenge received.");
 					sendChallengeResponse(challenge);
 				} else {
+					issueNewStatus("Failed to get challenge.");
 					Log.e("socket_serv", "Failed to retreive challenge");
 				}
 			} catch (IOException e) {
+				issueNewStatus("Failed to connect.");
 				Log.e("socket_serv", "IOException: " + e.toString());
 			}
 		}
@@ -64,6 +69,10 @@ public class SocketService extends Service {
 		void socketRead(String str);
 	}
 	
+	public interface StatusCallback {
+		void newStatus(String str);
+	}
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return m_binder;
@@ -71,6 +80,10 @@ public class SocketService extends Service {
 		
 	public void setCallback(SocketCallback callback) {
 		m_callback = callback;
+	}
+	
+	public void setStatusCallback(StatusCallback callback) {
+		m_statusCallback = callback;
 	}
 	
 	public void connectSocket(String ip, String id, String key) {
@@ -126,6 +139,10 @@ public class SocketService extends Service {
 		}
 
 		
+	}
+	
+	private void issueNewStatus(String str) {
+		if (m_statusCallback != null) m_statusCallback.newStatus(str);
 	}
 	
 	private byte[] strToBytes(String str) {

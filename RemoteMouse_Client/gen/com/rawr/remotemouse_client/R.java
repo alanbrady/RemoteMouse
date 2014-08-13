@@ -62,9 +62,9 @@ containing a value of this type.
         public static final int client_id=0x7f080010;
         public static final int client_key=0x7f080012;
         public static final int connectButton=0x7f080013;
+        public static final int connectStatusText=0x7f08000d;
         public static final int progress_bar=0x7f08000c;
         public static final int server_ip=0x7f08000e;
-        public static final int textView1=0x7f08000d;
         public static final int textView2=0x7f08000f;
         public static final int textView3=0x7f080011;
         public static final int text_dxedit=0x7f080006;

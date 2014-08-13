@@ -52,6 +52,7 @@ private:
 private slots:
     void socketReadyRead();
     void createSocket();
+    void socketClosed();
 //    void socketStateChanged(QAbstractSocket::SocketState socketState);
 
 };

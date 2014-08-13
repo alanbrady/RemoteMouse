@@ -197,7 +197,6 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
 
 void RemoteMouseServerThread::socketReadyRead()
 {
-    emit statusMessage("Request received.");
     qint64 bytes = m_socket->bytesAvailable();
     char* data = new char[bytes];
 
@@ -224,11 +223,19 @@ void RemoteMouseServerThread::createSocket()
         connect(m_socket, SIGNAL(readyRead()),
                 this, SLOT(socketReadyRead()));
         connect(m_socket, SIGNAL(disconnected()),
-                this, SLOT(quit()));
+                this, SLOT(socketClosed()));
         m_peerAddress = m_socket->peerAddress().toString();
         QString status = "Socket initialized: ";
         status += m_peerAddress;
         emit statusMessage(status);
     }
+}
+
+void RemoteMouseServerThread::socketClosed()
+{
+    QString status = "Socket disconnected: ";
+    status += m_peerAddress;
+    emit statusMessage(status);
+    quit();
 }
 
