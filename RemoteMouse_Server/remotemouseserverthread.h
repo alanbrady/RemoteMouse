@@ -28,10 +28,13 @@ public:
 
     void run();
 
+    qintptr socketDescriptor() const { return m_socketDesc; }
+
 signals:
     void socketError(QTcpSocket::SocketError);
     void serverError(QString);
     void statusMessage(QString);
+    void createSocketSignal();
 
 private:
     int m_socketDesc;
@@ -53,7 +56,6 @@ private slots:
     void socketReadyRead();
     void createSocket();
     void socketClosed();
-//    void socketStateChanged(QAbstractSocket::SocketState socketState);
 
 };
 

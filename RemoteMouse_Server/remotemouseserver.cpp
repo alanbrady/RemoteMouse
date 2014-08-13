@@ -12,7 +12,6 @@ RemoteMouseServer::~RemoteMouseServer()
         RemoteMouseServerThread* thread = clientThreads.at(i);
         thread->quit();
         thread->wait();
-        delete thread;
     }
 }
 
@@ -23,27 +22,24 @@ void RemoteMouseServer::socketThreadMessage(QString str)
 
 void RemoteMouseServer::socketThreadError(QString error)
 {
-
+    qDebug() << "Error: " << error;
 }
 
 void RemoteMouseServer::incomingConnection(qintptr handle)
 {
-    RemoteMouseServerThread* mouseThread =
-            new RemoteMouseServerThread(handle, m_ids, this);
+        RemoteMouseServerThread* mouseThread =
+                new RemoteMouseServerThread(handle, m_ids, this);
 
-    clientThreads.append(mouseThread);
+        clientThreads.append(mouseThread);
 
-    connect(mouseThread, SIGNAL(finished()), mouseThread, SLOT(deleteLater()));
-    connect(mouseThread, SIGNAL(statusMessage(QString)),
-            this, SLOT(socketThreadMessage(QString)));
-    connect(mouseThread, SIGNAL(serverError(QString)),
-            this, SLOT(socketThreadError(QString)));
-    connect(mouseThread, SIGNAL(finished()), this, SLOT(threadFinished()));
-    connect(this, SIGNAL(createSocket()),
-            mouseThread, SLOT(createSocket()));
+        connect(mouseThread, SIGNAL(finished()), mouseThread, SLOT(deleteLater()));
+        connect(mouseThread, SIGNAL(finished()), this, SLOT(threadFinished()));
+        connect(mouseThread, SIGNAL(statusMessage(QString)),
+                this, SLOT(socketThreadMessage(QString)));
+        connect(mouseThread, SIGNAL(serverError(QString)),
+                this, SLOT(socketThreadError(QString)));
 
-    mouseThread->start();
-    emit(createSocket());
+        mouseThread->start();
 }
 
 void RemoteMouseServer::threadFinished()
@@ -51,6 +47,5 @@ void RemoteMouseServer::threadFinished()
     RemoteMouseServerThread* thread = dynamic_cast<RemoteMouseServerThread*>(sender());
     if (thread != 0) {
         clientThreads.removeAll(thread);
-        delete thread;
     }
 }

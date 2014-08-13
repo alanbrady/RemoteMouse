@@ -23,6 +23,9 @@ RemoteMouseServerThread::~RemoteMouseServerThread()
 
 void RemoteMouseServerThread::run()
 {
+    connect(this, SIGNAL(createSocketSignal()),
+            this, SLOT(createSocket()), Qt::QueuedConnection);
+    emit createSocketSignal();
     exec();
 }
 
