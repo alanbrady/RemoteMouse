@@ -40,11 +40,17 @@ void RemoteMouseServerThread::parseReadData(char *data)
     } else if (strncmp(data, "CHAL_RSP", 8) == 0) {
         status = "Challenge response received from: ";
         status += m_peerAddress;
+        emit statusMessage(status);
         m_isVerified = verifyResponse(data);
+        sendVerificationStatus();
         if (m_isVerified) {
             status = "Client is verified: ";
         } else {
             status = "Client failed verification: ";
+            if (m_socket->bytesToWrite() > 0) {
+                m_socket->waitForBytesWritten();
+            }
+            m_socket->close();
         }
         status += m_peerAddress;
         emit statusMessage(status);
@@ -142,7 +148,7 @@ void RemoteMouseServerThread::sendChallenge()
 // randomly generate a sequence of characters
 // IDEA: random challenge length, right now it's static but I not sure if that
 //       makes a huge difference
-// challenge cannot include '\n' because that is the terminating character for
+// Challenge cannot include '\n' because that is the terminating character for
 // the client to determine the end of the challenge string.  A better
 // implementation would be to transmit the length of the challenge string
 // to the client.  This would also more aptly allow a variable length challenge
@@ -198,6 +204,30 @@ bool RemoteMouseServerThread::verifyResponse(const char *data)
     return isEqual;
 }
 
+void RemoteMouseServerThread::sendVerificationStatus()
+{
+    QString valStatus = "";
+    QString status = "Sending verification status (";
+
+    // I don't necessarily like the deviation from AAAA_BBB but the alternative
+    // would be something like CHAL_PAS/CHAL_FAL which I like less
+    if (m_isVerified)  {
+        valStatus = "CHALPASS";
+        status += "Pass";
+    } else {
+        valStatus = "CHALFAIL";
+        status += "Fail";
+    }
+
+    status += "): ";
+    status += m_peerAddress;
+    emit statusMessage(status);
+
+    m_socket->write(valStatus);
+    m_socket->flush();
+    m_socket->waitForBytesWritten();
+}
+
 void RemoteMouseServerThread::socketReadyRead()
 {
     qint64 bytes = m_socket->bytesAvailable();
@@ -236,7 +266,7 @@ void RemoteMouseServerThread::createSocket()
 
 void RemoteMouseServerThread::socketClosed()
 {
-    QString status = "Socket disconnected: ";
+    QString status = "Socket closed: ";
     status += m_peerAddress;
     emit statusMessage(status);
     quit();
