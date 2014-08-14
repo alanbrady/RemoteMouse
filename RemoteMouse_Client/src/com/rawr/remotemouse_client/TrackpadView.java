@@ -1,13 +1,15 @@
 package com.rawr.remotemouse_client;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.TypedArray;
+//import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
+//import android.graphics.Color;
+//import android.graphics.Paint;
+//import android.graphics.drawable.Drawable;
+//import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -16,17 +18,17 @@ import android.view.View;
  * TODO: document your custom view class.
  */
 public class TrackpadView extends View {
-	private String mExampleString; // TODO: use a default from R.string...
-	private int mExampleColor = Color.RED; // TODO: use a default from
+//	private String mExampleString; // TODO: use a default from R.string...
+//	private int mExampleColor = Color.RED; // TODO: use a default from
 											// R.color...
-	private float mExampleDimension = 0; // TODO: use a default from R.dimen...
-	private Drawable mExampleDrawable;
+//	private float mExampleDimension = 0; // TODO: use a default from R.dimen...
+//	private Drawable mExampleDrawable;
 
-	private TextPaint mTextPaint;
-	private float mTextWidth;
-	private float mTextHeight;
+//	private TextPaint mTextPaint;
+//	private float mTextWidth;
+//	private float mTextHeight;
 	
-	private TrackpadCallback mTpCallback;
+	private TrackpadCallback m_trackPadCallback;
 	
 	public TrackpadView(Context context) {
 		super(context);
@@ -45,45 +47,45 @@ public class TrackpadView extends View {
 
 	private void init(AttributeSet attrs, int defStyle) {
 		// Load attributes
-		final TypedArray a = getContext().obtainStyledAttributes(attrs,
-				R.styleable.TrackpadView, defStyle, 0);
+//		final TypedArray a = getContext().obtainStyledAttributes(attrs,
+//				R.styleable.TrackpadView, defStyle, 0);
 
-		mExampleString = a.getString(R.styleable.TrackpadView_exampleString);
-		mExampleColor = a.getColor(R.styleable.TrackpadView_exampleColor,
-				mExampleColor);
+//		mExampleString = a.getString(R.styleable.TrackpadView_exampleString);
+//		mExampleColor = a.getColor(R.styleable.TrackpadView_exampleColor,
+//				mExampleColor);
 		// Use getDimensionPixelSize or getDimensionPixelOffset when dealing
 		// with
 		// values that should fall on pixel boundaries.
-		mExampleDimension = a.getDimension(
-				R.styleable.TrackpadView_exampleDimension, mExampleDimension);
+//		mExampleDimension = a.getDimension(
+//				R.styleable.TrackpadView_exampleDimension, mExampleDimension);
 
-		if (a.hasValue(R.styleable.TrackpadView_exampleDrawable)) {
-			mExampleDrawable = a
-					.getDrawable(R.styleable.TrackpadView_exampleDrawable);
-			mExampleDrawable.setCallback(this);
-		}
+//		if (a.hasValue(R.styleable.TrackpadView_exampleDrawable)) {
+//			mExampleDrawable = a
+//					.getDrawable(R.styleable.TrackpadView_exampleDrawable);
+//			mExampleDrawable.setCallback(this);
+//		}
 
-		mTpCallback = null;
+		m_trackPadCallback = null;
 		
-		a.recycle();
+//		a.recycle();
 
 		// Set up a default TextPaint object
-		mTextPaint = new TextPaint();
-		mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-		mTextPaint.setTextAlign(Paint.Align.LEFT);
+//		mTextPaint = new TextPaint();
+//		mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+//		mTextPaint.setTextAlign(Paint.Align.LEFT);
 
 		// Update TextPaint and text measurements from attributes
-		invalidateTextPaintAndMeasurements();
+//		invalidateTextPaintAndMeasurements();
 	}
 
-	private void invalidateTextPaintAndMeasurements() {
-		mTextPaint.setTextSize(mExampleDimension);
-		mTextPaint.setColor(mExampleColor);
-		mTextWidth = mTextPaint.measureText(mExampleString);
+//	private void invalidateTextPaintAndMeasurements() {
+//		mTextPaint.setTextSize(mExampleDimension);
+//		mTextPaint.setColor(mExampleColor);
+//		mTextWidth = mTextPaint.measureText(mExampleString);
 
-		Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-		mTextHeight = fontMetrics.bottom;
-	}
+//		Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+//		mTextHeight = fontMetrics.bottom;
+//	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -91,18 +93,18 @@ public class TrackpadView extends View {
 
 		// TODO: consider storing these as member variables to reduce
 		// allocations per draw cycle.
-		int paddingLeft = getPaddingLeft();
-		int paddingTop = getPaddingTop();
-		int paddingRight = getPaddingRight();
-		int paddingBottom = getPaddingBottom();
-
-		int contentWidth = getWidth() - paddingLeft - paddingRight;
-		int contentHeight = getHeight() - paddingTop - paddingBottom;
+//		int paddingLeft = getPaddingLeft();
+//		int paddingTop = getPaddingTop();
+//		int paddingRight = getPaddingRight();
+//		int paddingBottom = getPaddingBottom();
+//
+//		int contentWidth = getWidth() - paddingLeft - paddingRight;
+//		int contentHeight = getHeight() - paddingTop - paddingBottom;
 
 		// Draw the text.
-		canvas.drawText(mExampleString, paddingLeft
-				+ (contentWidth - mTextWidth) / 2, paddingTop
-				+ (contentHeight + mTextHeight) / 2, mTextPaint);
+//		canvas.drawText(mExampleString, paddingLeft
+//				+ (contentWidth - mTextWidth) / 2, paddingTop
+//				+ (contentHeight + mTextHeight) / 2, mTextPaint);
 
 		// Draw the example drawable on top of the text.
 //		if (mExampleDrawable != null) {
@@ -196,20 +198,43 @@ public class TrackpadView extends View {
 //	}
 	
 	public void setCallback(TrackpadCallback callback) {
-		mTpCallback = callback;
+		m_trackPadCallback = callback;
 	}
 	
-	@Override
+	@SuppressLint("ClickableViewAccessibility") @Override
 	public boolean onTouchEvent(MotionEvent e) {
-		if (mTpCallback != null) {
-			mTpCallback.callback(e);
-		} else
-			System.out.println("Error: no callback initiated");
-		
+		if (m_trackPadCallback != null) {
+//			mTpCallback.callback(e);
+			int action = e.getActionMasked();
+			switch(action) {
+			case MotionEvent.ACTION_DOWN:
+				m_trackPadCallback.mouseDown(e);
+				break;
+			case MotionEvent.ACTION_UP:
+				m_trackPadCallback.mouseUp(e);
+				break;
+			case MotionEvent.ACTION_MOVE:
+				m_trackPadCallback.mouseMove(e);
+				break;
+			}
+		} else {
+			Log.e("trackpad_view", "Error: no callback initiated");
+		}
+//		return super.onTouchEvent(e);
 		return true;
+	}
+	
+//	@Override
+//	public boolean performClick() {
+//		return super.performClick();
+//	}
+	
+	public interface TrackpadCallback {
+//		public void callback(MotionEvent e);
+		public void mouseDown(MotionEvent e);
+		public void mouseUp(MotionEvent e);
+		public void mouseMove(MotionEvent e);
 	}
 }
 
-interface TrackpadCallback {
-	public void callback(MotionEvent e);
-}
+

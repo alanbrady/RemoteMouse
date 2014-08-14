@@ -43,6 +43,7 @@ public class ConnectActivity extends Activity {
 		super.onDestroy();
 		if (m_isBound) {
 			unbindService(m_conn);
+			Log.d("connect_activity", "Socket service unbound");
 		}
 	}
 	
@@ -82,7 +83,9 @@ public class ConnectActivity extends Activity {
 
 		@Override
 		public void verificationPass() {
-			// TODO - implement trackpad activity activation upon success
+			Intent trackpad = new Intent(getApplicationContext(), TrackpadActivity.class);
+			startActivity(trackpad);
+//			finish();
 		}
 
 		@Override

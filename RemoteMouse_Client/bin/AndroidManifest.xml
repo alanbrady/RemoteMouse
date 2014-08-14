@@ -27,7 +27,8 @@
         </activity>
         <activity
             android:name=".ConnectActivity"
-            android:label="@string/title_activity_connect" >
+            android:label="@string/title_activity_connect" 
+            android:noHistory="true">
         </activity>
 
         <service
@@ -35,6 +36,11 @@
             android:enabled="true"
             android:exported="false" >
         </service>
+
+        <activity
+            android:name=".TrackpadActivity"
+            android:label="@string/title_activity_trackpad" >
+        </activity>
     </application>
 
 </manifest>

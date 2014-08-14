@@ -79,8 +79,7 @@ public class MainActivity extends Activity {
 		connectScreen.putExtra("ip", serverIpText.getText().toString());
 		connectScreen.putExtra("id", clientIdText.getText().toString());
 		connectScreen.putExtra("key", clientKeyText.getText().toString());
-		Log.e("n", "Attempting to connect to: " + serverIpText.getText());
-		Log.e("n", "Id: " + clientIdText.getText() + " Key: " + clientKeyText.getText());
+		Log.d("main", "Attempting to connect to: " + serverIpText.getText());
 		startActivity(connectScreen);
 	}
 	

@@ -6,5 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="starting_textview">Null</string>
     <string name="title_activity_connect">ConnectActivity</string>
+    <string name="title_activity_trackpad">TrackpadActivity</string>
 
 </resources>

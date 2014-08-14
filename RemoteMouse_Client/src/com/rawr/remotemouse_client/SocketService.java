@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Arrays;
 
 import android.app.Service;
 import android.content.Intent;
@@ -17,7 +18,7 @@ public class SocketService extends Service {
 	private String m_ip;
 	private String m_id;
 	private String m_key;
-	private SocketCallback m_callback = null;
+//	private SocketCallback m_callback = null;
 	private StatusCallback m_statusCallback = null;
 	private VerificationCallback m_verificationCallback = null;
 	private Socket m_socket;
@@ -53,7 +54,7 @@ public class SocketService extends Service {
 		@Override
 		public void run() {
 			try {
-				Log.e("socket_serv", "Connecting socket...");
+				Log.d("socket_serv", "Connecting socket...");
 				m_socket = new Socket();
 				m_socket.setSoTimeout(10000);
 				m_socket.connect(new InetSocketAddress(m_ip, SERVER_PORT), 1000);
@@ -68,7 +69,7 @@ public class SocketService extends Service {
 				if (challenge != null) {
 					issueNewStatus("Challenge received.");
 					sendChallengeResponse(challenge);
-					if (getVerificationResponse()) {
+					if (getVerificationResponse() && m_verificationCallback != null) {
 						m_verificationCallback.verificationPass();
 					} else {
 						m_verificationCallback.verificationFail();
@@ -102,9 +103,9 @@ public class SocketService extends Service {
 		return m_binder;
 	}
 		
-	public void setCallback(SocketCallback callback) {
-		m_callback = callback;
-	}
+//	public void setCallback(SocketCallback callback) {
+//		m_callback = callback;
+//	}
 	
 	public void setStatusCallback(StatusCallback callback) {
 		m_statusCallback = callback;
@@ -180,7 +181,7 @@ public class SocketService extends Service {
 			return false;
 		}
 		boolean success = false;
-		if (response.equals(passResponse)) {
+		if (Arrays.equals(response, passResponse)) {
 			success = true;
 		}
 		return success;
