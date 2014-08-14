@@ -19,6 +19,7 @@ public class SocketService extends Service {
 	private String m_key;
 	private SocketCallback m_callback = null;
 	private StatusCallback m_statusCallback = null;
+	private VerificationCallback m_verificationCallback = null;
 	private Socket m_socket;
 	private final IBinder m_binder = new SocketBinder();
 	private BufferedOutputStream m_out = null;
@@ -29,6 +30,19 @@ public class SocketService extends Service {
 	public SocketService() {
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (m_socket.isConnected()) {
+			try {
+				m_socket.close();
+			} catch (IOException e) {
+				Log.e("socket_serv", "Failed to close socket.");
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public class SocketBinder extends Binder {
 		SocketService getService() {
 			return SocketService.this;
@@ -54,6 +68,11 @@ public class SocketService extends Service {
 				if (challenge != null) {
 					issueNewStatus("Challenge received.");
 					sendChallengeResponse(challenge);
+					if (getVerificationResponse()) {
+						m_verificationCallback.verificationPass();
+					} else {
+						m_verificationCallback.verificationFail();
+					}
 				} else {
 					issueNewStatus("Failed to get challenge.");
 					Log.e("socket_serv", "Failed to retreive challenge");
@@ -73,6 +92,11 @@ public class SocketService extends Service {
 		void newStatus(String str);
 	}
 	
+	public interface VerificationCallback {
+		void verificationPass();
+		void verificationFail();
+	}
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return m_binder;
@@ -84,6 +108,10 @@ public class SocketService extends Service {
 	
 	public void setStatusCallback(StatusCallback callback) {
 		m_statusCallback = callback;
+	}
+	
+	public void setVerificationCallback(VerificationCallback callback) {
+		m_verificationCallback = callback;
 	}
 	
 	public void connectSocket(String ip, String id, String key) {
@@ -137,8 +165,25 @@ public class SocketService extends Service {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		
+	}
+	
+	private boolean getVerificationResponse() {
+		int responseLen = 8;
+		byte[] response = new byte[responseLen];
+		byte[] passResponse = strToBytes("CHALPASS");
+//		byte[] failResponse = strToBytes("CHALFAIL");
+		try {
+			m_in.read(response, 0, responseLen);
+		} catch (IOException e) {
+			Log.e("socket_serv", "Error: failed to read socket at verification response.");
+			e.printStackTrace();
+			return false;
+		}
+		boolean success = false;
+		if (response.equals(passResponse)) {
+			success = true;
+		}
+		return success;
 	}
 	
 	private void issueNewStatus(String str) {

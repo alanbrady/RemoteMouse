@@ -51,6 +51,7 @@ private:
     void sendChallenge();
     void generateChallenge();
     bool verifyResponse(const char *data);
+    void sendVerificationStatus();
 
 private slots:
     void socketReadyRead();

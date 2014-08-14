@@ -223,7 +223,7 @@ void RemoteMouseServerThread::sendVerificationStatus()
     status += m_peerAddress;
     emit statusMessage(status);
 
-    m_socket->write(valStatus);
+    m_socket->write(valStatus.toStdString().c_str());
     m_socket->flush();
     m_socket->waitForBytesWritten();
 }

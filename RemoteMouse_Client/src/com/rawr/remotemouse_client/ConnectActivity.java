@@ -3,10 +3,12 @@ package com.rawr.remotemouse_client;
 import com.rawr.remotemouse_client.SocketService.SocketBinder;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.content.Context;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.widget.TextView;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -33,10 +35,18 @@ public class ConnectActivity extends Activity {
 		m_statusText = (TextView) findViewById(R.id.connectStatusText);
 		
 		Intent intent = new Intent(this, SocketService.class);
-		bindService(intent, mConn, Context.BIND_AUTO_CREATE);
+		bindService(intent, m_conn, Context.BIND_AUTO_CREATE);
 	}
 	
-	private ServiceConnection mConn = new ServiceConnection() {
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (m_isBound) {
+			unbindService(m_conn);
+		}
+	}
+	
+	private ServiceConnection m_conn = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			SocketBinder binder = (SocketBinder)service;
@@ -45,6 +55,7 @@ public class ConnectActivity extends Activity {
 				Log.d("connect_act", "Service has been bound, attempting socket connect.");
 				m_isBound = true;
 				m_socketService.setStatusCallback(new SocketStatusCallback());
+				m_socketService.setVerificationCallback(new SocketVerificationCallback());
 				m_socketService.connectSocket(m_ip, m_id, m_key);
 			}
 		}
@@ -65,6 +76,35 @@ public class ConnectActivity extends Activity {
 				}
 			});
 		}
+	}
+	
+	private class SocketVerificationCallback implements SocketService.VerificationCallback {
+
+		@Override
+		public void verificationPass() {
+			// TODO - implement trackpad activity activation upon success
+		}
+
+		@Override
+		public void verificationFail() {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					verificationErrorMessage();
+				}
+			});
+		}
 		
+	}
+	
+	private void verificationErrorMessage() {
+		AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+		dlgAlert.setTitle("Verification Fail");
+		dlgAlert.setMessage("Client verification failed.  Make sure client ID and key are correct.");
+		dlgAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		});
+		dlgAlert.create().show();
 	}
 }
