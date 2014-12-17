@@ -1,0 +1,2 @@
+C:\Qt_Projects\RemoteMouse\RemoteMouse_Client\app\build\intermediates\classes\debug
+C:\Qt_Projects\RemoteMouse\RemoteMouse_Client\app\build\intermediates\pre-dexed\debug\support-v4-18.0.0-83cb2dea1968bc5fde60c77d8e5a3e201d81f062.jar
