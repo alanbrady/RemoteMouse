@@ -3,7 +3,6 @@ package com.rawr.remotemouse_client;
 //import com.rawr.remotemouse_client.ConnectActivity.SocketStatusCallback;
 //import com.rawr.remotemouse_client.ConnectActivity.SocketVerificationCallback;
 import com.rawr.remotemouse_client.SocketService.SocketBinder;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -58,9 +57,22 @@ public class TrackpadActivity extends Activity {
 
 		@Override
 		public void mouseMove(MotionEvent e) {
-			Log.d("trackpad_activity", "Mouse move");
+//            Log.d("trackpad_activity", "Mouse move");
+//            final int pointer = e.findPointerIndex(e.getPointerId(0));
+            float newX = e.getX();
+            float newY = e.getY();
+            int diffX = (int)(newX - lastX);
+            lastX = newX;
+            int diffY = (int)(newY - lastY);
+            lastY = newY;
+
+            m_socketService.sendMouseMove(diffX, diffY);
+            Log.d("trackpad_activity", "Mouse Move: " + diffX + " " + diffY);
 		}
-		
+
+        private float lastX;
+        private float lastY;
+
 	};
 	
 	private ServiceConnection m_conn = new ServiceConnection() {
@@ -79,7 +91,8 @@ public class TrackpadActivity extends Activity {
 		
 		@Override
 		public void onServiceDisconnected(ComponentName className) {
-			m_isBound = false;
+			Log.d("trackpad_activity", "Socket service is unbound");
+            m_isBound = false;
 		}
 	};
 }

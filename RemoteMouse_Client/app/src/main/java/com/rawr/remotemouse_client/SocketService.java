@@ -71,9 +71,11 @@ public class SocketService extends Service {
 					sendChallengeResponse(challenge);
 					if (getVerificationResponse() && m_verificationCallback != null) {
 						m_verificationCallback.verificationPass();
-					} else {
+					} else if (m_verificationCallback != null) {
 						m_verificationCallback.verificationFail();
-					}
+					} else {
+                        Log.e("socket_serv", "Verification Callback is null");
+                    }
 				} else {
 					issueNewStatus("Failed to get challenge.");
 					Log.e("socket_serv", "Failed to retreive challenge");
@@ -121,7 +123,19 @@ public class SocketService extends Service {
 		m_key = key;
 		new Thread(new ConnectRunnable()).start();
 	}
-	
+
+    public void sendMouseMove(int x, int y) {
+        String msg = String.format("MOUS_DAT%06.6d%06.6d", x, y);
+        try {
+            m_out.write(msg.getBytes("ASCII"));
+            m_out.flush();
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
 	private byte[] getChallenge() {
 		try {
 			m_out.write("CHAL_REQ\n".getBytes("ASCII"));
