@@ -54,7 +54,7 @@ void RemoteMouseServerThread::parseReadData(char *data)
         }
         status += m_peerAddress;
         emit statusMessage(status);
-    } else if (strncmp(data, "MOUS_MOV", 8) == 0) {
+    } else if (strncmp(data, "MOUS_DAT", 8) == 0) {
         if (m_isVerified)
             parseMouseMoveData(data);
         else {
@@ -125,24 +125,28 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data)
     char yStr[7];
     xStr[6] = '\0';
     yStr[6] = '\0';
-    int xAmt;
-    int yAmt;
+    double xAmt;
+    double yAmt;
 
 
     memcpy(xStr, data, 6); // copy x amount to str
     data += 6;
     memcpy(yStr, data, 6); // copy y amount to str
 
+    qDebug() << "xStr: " << xStr << " yStr: " << yStr;
+
     // parse the x/y strings into ints
-    if (sscanf(xStr, "%d", &xAmt) != 1) {
+    if (sscanf(xStr, "%lf", &xAmt) != 1) {
         QString fail("Error: failed to parse mouse move x");
         emit serverError(fail);
     }
 
-    if (sscanf(yStr, "%d", &yAmt) != 1) {
+    if (sscanf(yStr, "%lf", &yAmt) != 1) {
         QString fail("Error: failed to parse mouse mvoe y");
         emit serverError(fail);
     }
+
+    qDebug() << "Move| x: " << xAmt << " y: " << yAmt;
 
     // adjust cursor
     QDesktopWidget* desktop = QApplication::desktop();

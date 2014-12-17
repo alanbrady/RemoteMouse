@@ -47,7 +47,9 @@ public class TrackpadActivity extends Activity {
 
 		@Override
 		public void mouseDown(MotionEvent e) {
-			Log.d("trackpad_activity", "Mouse down");			
+			Log.d("trackpad_activity", "Mouse down");
+            lastX = e.getX();
+            lastY = e.getY();
 		}
 
 		@Override
@@ -61,17 +63,23 @@ public class TrackpadActivity extends Activity {
 //            final int pointer = e.findPointerIndex(e.getPointerId(0));
             float newX = e.getX();
             float newY = e.getY();
-            int diffX = (int)(newX - lastX);
+            float diffX = newX - lastX;
             lastX = newX;
-            int diffY = (int)(newY - lastY);
+            float diffY = newY - lastY;
             lastY = newY;
 
-            m_socketService.sendMouseMove(diffX, diffY);
-            Log.d("trackpad_activity", "Mouse Move: " + diffX + " " + diffY);
+            diffX *= accel;
+            diffY *= accel;
+
+            if (diffX != 0 && diffY != 0) {
+                m_socketService.sendMouseMove(diffX, diffY);
+            }
+//            Log.d("trackpad_activity", "Mouse Move: " + diffX + " " + diffY);
 		}
 
         private float lastX;
         private float lastY;
+        private double accel = 2.5;
 
 	};
 	

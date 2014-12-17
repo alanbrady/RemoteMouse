@@ -124,8 +124,9 @@ public class SocketService extends Service {
 		new Thread(new ConnectRunnable()).start();
 	}
 
-    public void sendMouseMove(int x, int y) {
-        String msg = String.format("MOUS_DAT%06.6d%06.6d", x, y);
+    public void sendMouseMove(float x, float y) {
+        String msg = String.format("MOUS_DAT%06.2f%06.2f\n", x, y);
+//        Log.d("socket_serv", "mouse " + msg);
         try {
             m_out.write(msg.getBytes("ASCII"));
             m_out.flush();
