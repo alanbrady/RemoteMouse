@@ -123,6 +123,8 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data)
     data += 8; // increment data pointer past tag
     char xStr[7];
     char yStr[7];
+    xStr[6] = '\0';
+    yStr[6] = '\0';
     int xAmt;
     int yAmt;
 
@@ -132,12 +134,12 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data)
     memcpy(yStr, data, 6); // copy y amount to str
 
     // parse the x/y strings into ints
-    if (sscan(xStr, "%d", &xAmt) != 1) {
+    if (sscanf(xStr, "%d", &xAmt) != 1) {
         QString fail("Error: failed to parse mouse move x");
         emit serverError(fail);
     }
 
-    if (sscan(yStr, "%d", &yAmt) != 1) {
+    if (sscanf(yStr, "%d", &yAmt) != 1) {
         QString fail("Error: failed to parse mouse mvoe y");
         emit serverError(fail);
     }
