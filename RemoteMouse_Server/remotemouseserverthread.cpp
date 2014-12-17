@@ -85,36 +85,70 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data)
     // Format should be MOUS_DAT(+/-)0.---(+/-)0.---
     // First number is x percent, second number is y percent
     // -- consider revising this to pixels instead of percents
-    data += 8; // jump past socket tag
-    double xPerc;
-    double yPerc;
+//    data += 8; // jump past socket tag
+//    double xPerc;
+//    double yPerc;
+//    char xStr[7];
+//    char yStr[7];
+//    xStr[6] = '0'; // set last bits to null for sscanf
+//    yStr[6] = '0';
+//    memcpy(xStr, data, 6);
+//    data += 6; // jump past x data
+//    memcpy(yStr, data, 6);
+
+
+//    // parse data into a double
+//    if (sscanf(xStr, "%lf", &xPerc) != 1) {
+//        QString fail("Error: failed to parse x perc");
+//        emit serverError(fail);
+//    }
+//    if (sscanf(yStr, "%lf", &yPerc) != 1) {
+//        QString fail("Error: failed to parse y perc");
+//        emit serverError(fail);
+//    }
+
+
+//    QDesktopWidget* desktop = QApplication::desktop();
+//    QCursor c = desktop->cursor();
+//    int xDif = m_screenDims.x()*xPerc;
+//    int yDif = m_screenDims.y()*yPerc;
+//    QPoint pos = desktop->mapToGlobal(c.pos());
+//    pos.setX(pos.x()+xDif);
+//    pos.setY(pos.y()+yDif);
+//    desktop->setCursor(c);
+
+    // Interpret mouse move data.
+    // Input string: MOUS_DAT<x amount><y amount>
+
+    data += 8; // increment data pointer past tag
     char xStr[7];
     char yStr[7];
-    *(xStr+6) = '0'; // set last bits to null for sscanf
-    *(yStr+6) = '0';
-    memcpy(xStr, data, 6);
-    data += 6; // jump past x data
-    memcpy(yStr, data, 6);
+    int xAmt;
+    int yAmt;
 
 
-    // parse data into a double
-    if (sscanf(xStr, "%lf", &xPerc) != 1) {
-        QString fail("Error: failed to parse x perc");
-        emit serverError(fail);
-    }
-    if (sscanf(yStr, "%lf", &yPerc) != 1) {
-        QString fail("Error: failed to parse y perc");
+    memcpy(xStr, data, 6); // copy x amount to str
+    data += 6;
+    memcpy(yStr, data, 6); // copy y amount to str
+
+    // parse the x/y strings into ints
+    if (sscan(xStr, "%d", &xAmt) != 1) {
+        QString fail("Error: failed to parse mouse move x");
         emit serverError(fail);
     }
 
+    if (sscan(yStr, "%d", &yAmt) != 1) {
+        QString fail("Error: failed to parse mouse mvoe y");
+        emit serverError(fail);
+    }
 
+    // adjust cursor
     QDesktopWidget* desktop = QApplication::desktop();
     QCursor c = desktop->cursor();
-    int xDif = m_screenDims.x()*xPerc;
-    int yDif = m_screenDims.y()*yPerc;
     QPoint pos = desktop->mapToGlobal(c.pos());
-    pos.setX(pos.x()+xDif);
-    pos.setY(pos.y()+yDif);
+    pos.setX(pos.x()+xAmt);
+    pos.setY(pos.y()+yAmt);
+    c.setPos(pos);
     desktop->setCursor(c);
 }
 

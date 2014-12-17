@@ -1,4 +1,8 @@
 RemoteMouse_Client_old
+RemoteMouse_Client/.idea/
+RemoteMouse_Client/.gradle/
+RemoteMouse_Client/build/
+RemoteMouse_Client/app/build/
 
 # C++ objects and libs
 
