@@ -183,6 +183,7 @@ void RemoteMouseServerThread::performMouseClick()
     // code here
 
     // Windows code
+    qDebug() << "Mouse click received";
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP,
                 0, 0, 0, 0);
 

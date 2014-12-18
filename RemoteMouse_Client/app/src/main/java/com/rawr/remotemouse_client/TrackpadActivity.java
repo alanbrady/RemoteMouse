@@ -48,13 +48,16 @@ public class TrackpadActivity extends Activity {
 		@Override
 		public void mouseDown(MotionEvent e) {
 //			Log.d("trackpad_activity", "Mouse down");
-            lastX = e.getX();
-            lastY = e.getY();
+            firstX = lastX = e.getX();
+            firstY = lastY = e.getY();
 		}
 
 		@Override
 		public void mouseUp(MotionEvent e) {
 //			Log.d("trackpad_activity", "Mouse up");
+            if (e.getX() == firstX && e.getY() == firstY) {
+                m_socketService.sendMouseClick();
+            }
 		}
 
 		@Override
@@ -105,6 +108,8 @@ public class TrackpadActivity extends Activity {
 //            Log.d("trackpad_activity", "Mouse Move: " + diffX + " " + diffY);
 		}
 
+        private double firstX;
+        private double firstY;
         private double lastX;
         private double lastY;
         private double accel = 2.5;

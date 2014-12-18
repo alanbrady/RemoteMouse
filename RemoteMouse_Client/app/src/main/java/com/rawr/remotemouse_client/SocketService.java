@@ -152,6 +152,19 @@ public class SocketService extends Service {
         }
     }
 
+    public void sendMouseClick() {
+        String msg = "MOUS_CLK";
+        try {
+            m_out.write(8);
+            m_out.write(msg.getBytes("ASCII"));
+            m_out.flush();
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
 	private byte[] getChallenge() {
 		try {
             m_out.write(8);
