@@ -43,7 +43,6 @@ bool ClientIdInterface::removeClient(const QString &clientId)
     QMutexLocker locker(&m_mutex);
     bool clientFound = false;
     m_file.open(QFile::ReadOnly | QFile::Text);
-//    QString data;
     QVector<QString> data;
     if (m_file.isReadable()) {
         while (!m_file.atEnd()) {
@@ -128,7 +127,6 @@ void ClientIdInterface::saveKeyToFile(const QString& cliendId,
     while (!m_file.atEnd()) {
         QString line = m_file.readLine();
         if (!line.startsWith(idKey) && !line.isEmpty()) {
-//            data.append(line);
             data.append(line);
         }
     }
@@ -150,7 +148,6 @@ void ClientIdInterface::saveKeyToFile(const QString& cliendId,
 int ClientIdInterface::getDelimPos(const char *str, const int strLen,
                                    const char delim)
 {
-//    const char* endStr = str+strLen;
     const char* strIter = str+strLen-1;
     int pos = strLen-1;
     while (strIter >= str) {

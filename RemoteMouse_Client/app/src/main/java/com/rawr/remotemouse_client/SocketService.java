@@ -20,17 +20,14 @@ public class SocketService extends Service {
 	private String m_ip;
 	private String m_id;
 	private String m_key;
-//	private SocketCallback m_callback = null;
 	private StatusCallback m_statusCallback = null;
 	private VerificationCallback m_verificationCallback = null;
 	private Socket m_socket;
 	private final IBinder m_binder = new SocketBinder();
 	private DataOutputStream m_out = null;
 	private BufferedInputStream m_in = null;
-	
-	private final int SERVER_PORT = 48048;
-	
-	public SocketService() {
+
+    public SocketService() {
 	}
 
 	@Override
@@ -59,7 +56,8 @@ public class SocketService extends Service {
 				Log.d("socket_serv", "Connecting socket...");
 				m_socket = new Socket();
 				m_socket.setSoTimeout(10000);
-				m_socket.connect(new InetSocketAddress(m_ip, SERVER_PORT), 1000);
+                int SERVER_PORT = 48048;
+                m_socket.connect(new InetSocketAddress(m_ip, SERVER_PORT), 1000);
 				
 				Log.d("socket_serv", "Initializing input/output streams");
 				m_out = new DataOutputStream(new BufferedOutputStream(m_socket.getOutputStream()));
@@ -88,11 +86,7 @@ public class SocketService extends Service {
 			}
 		}
 	}
-	
-	public interface SocketCallback {
-		void socketRead(String str);
-	}
-	
+
 	public interface StatusCallback {
 		void newStatus(String str);
 	}
@@ -106,11 +100,7 @@ public class SocketService extends Service {
 	public IBinder onBind(Intent intent) {
 		return m_binder;
 	}
-		
-//	public void setCallback(SocketCallback callback) {
-//		m_callback = callback;
-//	}
-	
+
 	public void setStatusCallback(StatusCallback callback) {
 		m_statusCallback = callback;
 	}
@@ -127,23 +117,15 @@ public class SocketService extends Service {
 	}
 
     public void sendMouseMove(double x, double y) {
-//        String msg = String.format("MOUS_DAT%06.2f%06.2f\n", x, y);
-//        Log.d("socket_serv", "Mouse Move: " + x + " " + y);
         String msg = "MOUS_DAT";
         byte[] bytes = new byte[8];
-//        int messageSize = 24;
-//        Log.d("socket_serv", "mouse " + msg);
         try {
-//            ByteBuffer.wrap(bytes).putInt(messageSize);
-//            ByteBuffer.wrap(bytes).putChar((char)messageSize);
             m_out.write(24);
             m_out.write(msg.getBytes("ASCII"));
             ByteBuffer.wrap(bytes).putDouble(x);
             m_out.write(bytes);
             ByteBuffer.wrap(bytes).putDouble(y);
             m_out.write(bytes);
-//            m_out.writeDouble(x);
-//            m_out.writeDouble(y);
             m_out.flush();
         } catch (UnsupportedEncodingException e1) {
             e1.printStackTrace();
@@ -217,7 +199,6 @@ public class SocketService extends Service {
 		int responseLen = 8;
 		byte[] response = new byte[responseLen];
 		byte[] passResponse = strToBytes("CHALPASS");
-//		byte[] failResponse = strToBytes("CHALFAIL");
 		try {
 			m_in.read(response, 0, responseLen);
 		} catch (IOException e) {

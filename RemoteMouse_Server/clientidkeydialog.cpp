@@ -65,15 +65,6 @@ void ClientIdKeyDialog::addNewId()
         newId = QInputDialog::getText(this, "Enter Name for New Client",
                                       "Client Name:", QLineEdit::Normal, QString(),
                                       &result, 0, Qt::ImhEmailCharactersOnly);
-//        if (newId.length() > m_ids->getIdLen()) {
-//            QString errorMsg = "Name length must not exceed ";
-//            errorMsg += m_ids->getIdLen();
-//            errorMsg += " characters.";
-//            QMessageBox::information(this, "Name Length too Long",
-//                                     errorMsg);
-//            errorOccurred = true;
-//        }
-
         if (m_ids->idExists(newId)) {
             QString errorMsg = "The name: ";
             errorMsg += newId;
@@ -110,14 +101,6 @@ void ClientIdKeyDialog::renameId()
             newId = QInputDialog::getText(this, "Enter New Name",
                                           "Client Name:", QLineEdit::Normal, QString(),
                                           &result, 0, Qt::ImhEmailCharactersOnly);
-//            if (newId.length() > m_ids->getIdLen()) {
-//                QString errorMsg = "Name length must not exceed ";
-//                errorMsg += m_ids->getIdLen();
-//                errorMsg += " characters.";
-//                QMessageBox::information(this, "Name Length too Long",
-//                                         errorMsg);
-//                errorOccurred = true;
-//            }
 
             if (m_ids->idExists(newId)) {
                 QString errorMsg = "The name: ";

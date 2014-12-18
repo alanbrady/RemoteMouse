@@ -9,9 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_clients = ui->table_clients;
 
-//    connect(ui->button_start, SIGNAL(clicked()), this, SLOT(startServer()));
-//    connect(ui->button_stop, SIGNAL(clicked()), this, SLOT(stopServer()));
-
     ui->statusBar->showMessage("Remote Mouse initialized.");
 }
 

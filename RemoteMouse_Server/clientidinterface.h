@@ -12,7 +12,6 @@
 #include <time.h>
 #include <stdlib.h>
 #define MAXLEN 50
-//#define ID_LEN 8
 #define KEY_LEN 10
 
 /**
@@ -32,7 +31,6 @@
  *
  * WISHFUL THINKING:
  *  - encrypt id/key file
- *  - update random function to utilize awesome new <random> in C++11
  */
 
 class ClientIdInterface

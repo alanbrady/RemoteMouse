@@ -1,7 +1,5 @@
 package com.rawr.remotemouse_client;
 
-//import com.rawr.remotemouse_client.ConnectActivity.SocketStatusCallback;
-//import com.rawr.remotemouse_client.ConnectActivity.SocketVerificationCallback;
 import com.rawr.remotemouse_client.SocketService.SocketBinder;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -12,11 +10,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.MotionEvent;
-//import android.view.Menu;
-//import android.view.MenuItem;
 
 public class TrackpadActivity extends Activity {
-//	TrackpadCallback m_trackpad = null;
 	SocketService m_socketService = null;
 	TrackpadView m_trackpadView = null;
 	boolean m_isBound;
@@ -42,19 +37,16 @@ public class TrackpadActivity extends Activity {
 		}
 	}
 	
-//	private class TrackpadCallback implements TrackpadView.TrackpadCallback {
 	private TrackpadView.TrackpadCallback m_trackpadCallback = new TrackpadView.TrackpadCallback() {
 
 		@Override
 		public void mouseDown(MotionEvent e) {
-//			Log.d("trackpad_activity", "Mouse down");
             firstX = lastX = e.getX();
             firstY = lastY = e.getY();
 		}
 
 		@Override
 		public void mouseUp(MotionEvent e) {
-//			Log.d("trackpad_activity", "Mouse up");
             if (e.getX() == firstX && e.getY() == firstY) {
                 m_socketService.sendMouseClick();
             }
@@ -62,39 +54,10 @@ public class TrackpadActivity extends Activity {
 
 		@Override
 		public void mouseMove(MotionEvent e) {
-//            Log.d("trackpad_activity", "Mouse move");
-//            final int pointer = e.findPointerIndex(e.getPointerId(0));
-//            double newX = e.getX();
-//            double newY = e.getY();
-//            double diffX = newX - lastX;
-//            lastX = newX;
-//            double diffY = newY - lastY;
-//            lastY = newY;
-//
-//            diffX *= accel;
-//            diffY *= accel;
-//
-//            if (diffX != 0 && diffY != 0) {
-//                m_socketService.sendMouseMove(diffX, diffY);
-//            }
-
-
             double newX;
             double newY;
             double diffX;
             double diffY;
-//            final int histSize = e.getHistorySize();
-//            for (int i = 0; i < histSize; i++) {
-//                newX = e.getHistoricalX(i);
-//                newY = e.getHistoricalY(i);
-//                diffX = newX - lastX;
-//                lastX = newX;
-//                diffY = newY - lastY;
-//                lastY = newY;
-//                if (diffX != 0 && diffY != 0) {
-//                    m_socketService.sendMouseMove(diffX, diffY);
-//                }
-//            }
             newX = e.getX();
             newY = e.getY();
             diffX = newX - lastX;
@@ -104,8 +67,6 @@ public class TrackpadActivity extends Activity {
             if (diffX != 0 && diffY != 0) {
                 m_socketService.sendMouseMove(diffX, diffY);
             }
-
-//            Log.d("trackpad_activity", "Mouse Move: " + diffX + " " + diffY);
 		}
 
         private double firstX;
@@ -124,9 +85,6 @@ public class TrackpadActivity extends Activity {
 			if (m_socketService != null) {
 				Log.d("trackpad_activity", "Socket service bound.");
 				m_isBound = true;
-//				m_socketService.setStatusCallback(new SocketStatusCallback());
-//				m_socketService.setVerificationCallback(new SocketVerificationCallback());
-//				m_socketService.connectSocket(m_ip, m_id, m_key);
 			}
 		}
 		
