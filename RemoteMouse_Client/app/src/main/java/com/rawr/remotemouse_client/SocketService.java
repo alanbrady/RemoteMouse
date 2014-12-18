@@ -128,12 +128,15 @@ public class SocketService extends Service {
 
     public void sendMouseMove(double x, double y) {
 //        String msg = String.format("MOUS_DAT%06.2f%06.2f\n", x, y);
-        Log.d("socket_serv", "Mouse Move: " + x + " " + y);
+//        Log.d("socket_serv", "Mouse Move: " + x + " " + y);
         String msg = "MOUS_DAT";
         byte[] bytes = new byte[8];
-
+//        int messageSize = 24;
 //        Log.d("socket_serv", "mouse " + msg);
         try {
+//            ByteBuffer.wrap(bytes).putInt(messageSize);
+//            ByteBuffer.wrap(bytes).putChar((char)messageSize);
+            m_out.write(24);
             m_out.write(msg.getBytes("ASCII"));
             ByteBuffer.wrap(bytes).putDouble(x);
             m_out.write(bytes);
@@ -151,7 +154,8 @@ public class SocketService extends Service {
 
 	private byte[] getChallenge() {
 		try {
-			m_out.write("CHAL_REQ\n".getBytes("ASCII"));
+            m_out.write(8);
+			m_out.write("CHAL_REQ".getBytes("ASCII"));
 			m_out.flush();
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
@@ -182,11 +186,12 @@ public class SocketService extends Service {
 			k++;
 		}
 		try {
+            m_out.write(9+m_id.length()+hash.length);
 			m_out.write("CHAL_RSP".getBytes("ASCII"));
-			m_out.write((byte)m_id.length());
+			m_out.write(m_id.length());
 			m_out.write(m_id.getBytes("ASCII"));
 			m_out.write(hash);
-			m_out.write('\n');
+//			m_out.write('\n');
 			m_out.flush();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

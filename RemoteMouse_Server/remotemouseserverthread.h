@@ -10,10 +10,12 @@
 #include <QMutex>
 #include <QDataStream>
 #include <QCursor>
-#include <windows.h>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <windows.h>
+
 #include "clientidinterface.h"
+#include "socketdataqueue.h"
 
 #define MAX_READ 100
 #define CHALLENGE_LEN 50
@@ -44,9 +46,10 @@ private:
     char m_challenge[CHALLENGE_LEN];
     QRect m_screenDims;
     QString m_peerAddress;
+    SocketDataQueue m_socketDataQueue;
 
-    void parseReadData(char* data);
-    void parseMouseMoveData(char* data);
+    void parseReadData();
+    void parseMouseMoveData(const char *data);
     void byteSwap8(void* v);
     void performMouseClick();
     void sendChallenge();

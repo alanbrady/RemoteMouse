@@ -80,18 +80,18 @@ public class TrackpadActivity extends Activity {
             double newY;
             double diffX;
             double diffY;
-            final int histSize = e.getHistorySize();
-            for (int i = 0; i < histSize; i++) {
-                newX = e.getHistoricalX(i);
-                newY = e.getHistoricalY(i);
-                diffX = newX - lastX;
-                lastX = newX;
-                diffY = newY - lastY;
-                lastY = newY;
-                if (diffX != 0 && diffY != 0) {
-                    m_socketService.sendMouseMove(diffX, diffY);
-                }
-            }
+//            final int histSize = e.getHistorySize();
+//            for (int i = 0; i < histSize; i++) {
+//                newX = e.getHistoricalX(i);
+//                newY = e.getHistoricalY(i);
+//                diffX = newX - lastX;
+//                lastX = newX;
+//                diffY = newY - lastY;
+//                lastY = newY;
+//                if (diffX != 0 && diffY != 0) {
+//                    m_socketService.sendMouseMove(diffX, diffY);
+//                }
+//            }
             newX = e.getX();
             newY = e.getY();
             diffX = newX - lastX;

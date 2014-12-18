@@ -29,57 +29,62 @@ void RemoteMouseServerThread::run()
     exec();
 }
 
-void RemoteMouseServerThread::parseReadData(char *data)
+void RemoteMouseServerThread::parseReadData()
 {
-    QString status = "";
-    if (strncmp(data, "CHAL_REQ", 8) == 0) {
-        status = "Challenge requested from: ";
-        status += m_peerAddress;
-        emit statusMessage(status);
-        sendChallenge();
-    } else if (strncmp(data, "CHAL_RSP", 8) == 0) {
-        status = "Challenge response received from: ";
-        status += m_peerAddress;
-        emit statusMessage(status);
-        m_isVerified = verifyResponse(data);
-        sendVerificationStatus();
-        if (m_isVerified) {
-            status = "Client is verified: ";
-        } else {
-            status = "Client failed verification: ";
-            if (m_socket->bytesToWrite() > 0) {
-                m_socket->waitForBytesWritten();
+    while (!m_socketDataQueue.isEmpty()) {
+        SocketDataQueue::SocketData socketData = m_socketDataQueue.dequeueData();
+        const char* data = socketData.getData();
+        QString status = "";
+        if (strncmp(data, "CHAL_REQ", 8) == 0) {
+            status = "Challenge requested from: ";
+            status += m_peerAddress;
+            emit statusMessage(status);
+            sendChallenge();
+        } else if (strncmp(data, "CHAL_RSP", 8) == 0) {
+            status = "Challenge response received from: ";
+            status += m_peerAddress;
+            emit statusMessage(status);
+            m_isVerified = verifyResponse(data);
+            sendVerificationStatus();
+            if (m_isVerified) {
+                status = "Client is verified: ";
+            } else {
+                status = "Client failed verification: ";
+                if (m_socket->bytesToWrite() > 0) {
+                    m_socket->waitForBytesWritten();
+                }
+                m_socket->close();
             }
-            m_socket->close();
-        }
-        status += m_peerAddress;
-        emit statusMessage(status);
-    } else if (strncmp(data, "MOUS_DAT", 8) == 0) {
-        if (m_isVerified) {
-            parseMouseMoveData(data);
+            status += m_peerAddress;
+            emit statusMessage(status);
+        } else if (strncmp(data, "MOUS_DAT", 8) == 0) {
+            if (m_isVerified) {
+                parseMouseMoveData(data);
 
+            } else {
+                // close socket and emit failure message if attenmpts to send mouse data
+                // without passing verification
+                m_socket->close();
+                QString fail("Error: attempt to send mouse data without verification");
+                emit serverError(fail);
+            }
+        } else if (strncmp(data, "MOUS_CLK", 8) == 0) {
+            if (m_isVerified)
+                performMouseClick();
+            else {
+                m_socket->close();
+                QString fail("Error: attempt to send mouse click without verification");
+                emit serverError(fail);
+            }
         } else {
-            // close socket and emit failure message if attenmpts to send mouse data
-            // without passing verification
-            m_socket->close();
-            QString fail("Error: attempt to send mouse data without verification");
+            QString fail("Error: bad client request - ");
+            fail += data;
             emit serverError(fail);
         }
-    } else if (strncmp(data, "MOUS_CLK", 8) == 0) {
-        if (m_isVerified)
-            performMouseClick();
-        else {
-            m_socket->close();
-            QString fail("Error: attempt to send mouse click without verification");
-            emit serverError(fail);
-        }
-    } else {
-        QString fail("Error: bad client request");
-        emit serverError(fail);
     }
 }
 
-void RemoteMouseServerThread::parseMouseMoveData(char *data)
+void RemoteMouseServerThread::parseMouseMoveData(const char *data)
 {
     // Interpret mouse move data
     // mouse data should be a +/- percent to move mouse
@@ -124,8 +129,6 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data)
     data += 8; // increment data pointer past tag
     char xStr[8];
     char yStr[8];
-//    xStr[6] = '\0';
-//    yStr[6] = '\0';
     double xAmt;
     double yAmt;
 
@@ -152,7 +155,7 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data)
      xAmt = *((double*)xStr);
      yAmt = *((double*)yStr);
 
-    qDebug() << "Move| x: " << xAmt << " y: " << yAmt;
+//    qDebug() << "Move| x: " << xAmt << " y: " << yAmt;
 
     // adjust cursor
     QDesktopWidget* desktop = QApplication::desktop();
@@ -292,13 +295,13 @@ void RemoteMouseServerThread::socketReadyRead()
     int dataLen = 0;
     if (m_socket->isOpen()) {
         dataLen = m_socket->read(data, bytes);
-        m_socket->readLine();
     }
     if (dataLen == -1) {
         QString fail("Error: failed to read socket data");
         emit serverError(fail);
     } else {
-        parseReadData(data);
+        m_socketDataQueue.addData(data, dataLen);
+        parseReadData();
     }
 
     delete[] data;

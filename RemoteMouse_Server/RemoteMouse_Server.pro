@@ -16,7 +16,8 @@ SOURCES += main.cpp\
     addidchange.cpp \
     renameidchange.cpp \
     deleteidchange.cpp \
-    newkeychange.cpp
+    newkeychange.cpp \
+    socketdataqueue.cpp
 
 HEADERS  += mainwindow.h \
     remotemouseserver.h \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.h \
     addidchange.h \
     renameidchange.h \
     deleteidchange.h \
-    newkeychange.h
+    newkeychange.h \
+    socketdataqueue.h
 
 FORMS    += mainwindow.ui \
     clientidkeydialog.ui
