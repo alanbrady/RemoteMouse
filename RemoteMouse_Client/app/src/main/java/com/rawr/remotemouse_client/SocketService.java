@@ -2,6 +2,8 @@ package com.rawr.remotemouse_client;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.nio.ByteBuffer;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
@@ -23,7 +25,7 @@ public class SocketService extends Service {
 	private VerificationCallback m_verificationCallback = null;
 	private Socket m_socket;
 	private final IBinder m_binder = new SocketBinder();
-	private BufferedOutputStream m_out = null;
+	private DataOutputStream m_out = null;
 	private BufferedInputStream m_in = null;
 	
 	private final int SERVER_PORT = 48048;
@@ -60,7 +62,7 @@ public class SocketService extends Service {
 				m_socket.connect(new InetSocketAddress(m_ip, SERVER_PORT), 1000);
 				
 				Log.d("socket_serv", "Initializing input/output streams");
-				m_out = new BufferedOutputStream(m_socket.getOutputStream());
+				m_out = new DataOutputStream(new BufferedOutputStream(m_socket.getOutputStream()));
 				m_in = new BufferedInputStream(m_socket.getInputStream());
 				
 				Log.d("socket_serv", "Performing challenge validation");
@@ -124,11 +126,21 @@ public class SocketService extends Service {
 		new Thread(new ConnectRunnable()).start();
 	}
 
-    public void sendMouseMove(float x, float y) {
-        String msg = String.format("MOUS_DAT%06.2f%06.2f\n", x, y);
+    public void sendMouseMove(double x, double y) {
+//        String msg = String.format("MOUS_DAT%06.2f%06.2f\n", x, y);
+        Log.d("socket_serv", "Mouse Move: " + x + " " + y);
+        String msg = "MOUS_DAT";
+        byte[] bytes = new byte[8];
+
 //        Log.d("socket_serv", "mouse " + msg);
         try {
             m_out.write(msg.getBytes("ASCII"));
+            ByteBuffer.wrap(bytes).putDouble(x);
+            m_out.write(bytes);
+            ByteBuffer.wrap(bytes).putDouble(y);
+            m_out.write(bytes);
+//            m_out.writeDouble(x);
+//            m_out.writeDouble(y);
             m_out.flush();
         } catch (UnsupportedEncodingException e1) {
             e1.printStackTrace();

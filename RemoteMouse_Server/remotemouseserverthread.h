@@ -47,11 +47,13 @@ private:
 
     void parseReadData(char* data);
     void parseMouseMoveData(char* data);
+    void byteSwap8(void* v);
     void performMouseClick();
     void sendChallenge();
     void generateChallenge();
     bool verifyResponse(const char *data);
     void sendVerificationStatus();
+
 
 private slots:
     void socketReadyRead();

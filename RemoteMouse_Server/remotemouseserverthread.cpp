@@ -55,9 +55,10 @@ void RemoteMouseServerThread::parseReadData(char *data)
         status += m_peerAddress;
         emit statusMessage(status);
     } else if (strncmp(data, "MOUS_DAT", 8) == 0) {
-        if (m_isVerified)
+        if (m_isVerified) {
             parseMouseMoveData(data);
-        else {
+
+        } else {
             // close socket and emit failure message if attenmpts to send mouse data
             // without passing verification
             m_socket->close();
@@ -121,30 +122,35 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data)
     // Input string: MOUS_DAT<x amount><y amount>
 
     data += 8; // increment data pointer past tag
-    char xStr[7];
-    char yStr[7];
-    xStr[6] = '\0';
-    yStr[6] = '\0';
+    char xStr[8];
+    char yStr[8];
+//    xStr[6] = '\0';
+//    yStr[6] = '\0';
     double xAmt;
     double yAmt;
 
 
-    memcpy(xStr, data, 6); // copy x amount to str
-    data += 6;
-    memcpy(yStr, data, 6); // copy y amount to str
+    memcpy(xStr, data, 8); // copy x amount to str
+    data += 8;
+    memcpy(yStr, data, 8); // copy y amount to str
 
-    qDebug() << "xStr: " << xStr << " yStr: " << yStr;
+//    qDebug() << "xStr: " << xStr << " yStr: " << yStr;
 
     // parse the x/y strings into ints
-    if (sscanf(xStr, "%lf", &xAmt) != 1) {
-        QString fail("Error: failed to parse mouse move x");
-        emit serverError(fail);
-    }
+//    if (sscanf(xStr, "%lf", &xAmt) != 1) {
+//        QString fail("Error: failed to parse mouse move x");
+//        emit serverError(fail);
+//    }
 
-    if (sscanf(yStr, "%lf", &yAmt) != 1) {
-        QString fail("Error: failed to parse mouse mvoe y");
-        emit serverError(fail);
-    }
+//    if (sscanf(yStr, "%lf", &yAmt) != 1) {
+//        QString fail("Error: failed to parse mouse mvoe y");
+//        emit serverError(fail);
+//    }
+
+    byteSwap8(xStr);
+    byteSwap8(yStr);
+     xAmt = *((double*)xStr);
+     yAmt = *((double*)yStr);
 
     qDebug() << "Move| x: " << xAmt << " y: " << yAmt;
 
@@ -156,6 +162,16 @@ void RemoteMouseServerThread::parseMouseMoveData(char *data)
     pos.setY(pos.y()+yAmt);
     c.setPos(pos);
     desktop->setCursor(c);
+}
+
+void RemoteMouseServerThread::byteSwap8(void *v)
+{
+    char in[8], out[8];
+    memcpy(in, v, 8);
+    for (int i = 0; i < 8; i++) {
+        out[i] = in[7-i];
+    }
+    memcpy(v, out, 8);
 }
 
 void RemoteMouseServerThread::performMouseClick()
@@ -276,6 +292,7 @@ void RemoteMouseServerThread::socketReadyRead()
     int dataLen = 0;
     if (m_socket->isOpen()) {
         dataLen = m_socket->read(data, bytes);
+        m_socket->readLine();
     }
     if (dataLen == -1) {
         QString fail("Error: failed to read socket data");

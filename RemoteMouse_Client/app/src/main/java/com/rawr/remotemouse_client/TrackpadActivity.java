@@ -47,38 +47,66 @@ public class TrackpadActivity extends Activity {
 
 		@Override
 		public void mouseDown(MotionEvent e) {
-			Log.d("trackpad_activity", "Mouse down");
+//			Log.d("trackpad_activity", "Mouse down");
             lastX = e.getX();
             lastY = e.getY();
 		}
 
 		@Override
 		public void mouseUp(MotionEvent e) {
-			Log.d("trackpad_activity", "Mouse up");
+//			Log.d("trackpad_activity", "Mouse up");
 		}
 
 		@Override
 		public void mouseMove(MotionEvent e) {
 //            Log.d("trackpad_activity", "Mouse move");
 //            final int pointer = e.findPointerIndex(e.getPointerId(0));
-            float newX = e.getX();
-            float newY = e.getY();
-            float diffX = newX - lastX;
+//            double newX = e.getX();
+//            double newY = e.getY();
+//            double diffX = newX - lastX;
+//            lastX = newX;
+//            double diffY = newY - lastY;
+//            lastY = newY;
+//
+//            diffX *= accel;
+//            diffY *= accel;
+//
+//            if (diffX != 0 && diffY != 0) {
+//                m_socketService.sendMouseMove(diffX, diffY);
+//            }
+
+
+            double newX;
+            double newY;
+            double diffX;
+            double diffY;
+            final int histSize = e.getHistorySize();
+            for (int i = 0; i < histSize; i++) {
+                newX = e.getHistoricalX(i);
+                newY = e.getHistoricalY(i);
+                diffX = newX - lastX;
+                lastX = newX;
+                diffY = newY - lastY;
+                lastY = newY;
+                if (diffX != 0 && diffY != 0) {
+                    m_socketService.sendMouseMove(diffX, diffY);
+                }
+            }
+            newX = e.getX();
+            newY = e.getY();
+            diffX = newX - lastX;
             lastX = newX;
-            float diffY = newY - lastY;
+            diffY = newY - lastY;
             lastY = newY;
-
-            diffX *= accel;
-            diffY *= accel;
-
             if (diffX != 0 && diffY != 0) {
                 m_socketService.sendMouseMove(diffX, diffY);
             }
+
 //            Log.d("trackpad_activity", "Mouse Move: " + diffX + " " + diffY);
 		}
 
-        private float lastX;
-        private float lastY;
+        private double lastX;
+        private double lastY;
         private double accel = 2.5;
 
 	};
