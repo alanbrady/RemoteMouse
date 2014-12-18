@@ -3,6 +3,7 @@ RemoteMouse_Client/.idea/
 RemoteMouse_Client/.gradle/
 RemoteMouse_Client/build/
 RemoteMouse_Client/app/build/
+client_ids.dat
 
 # C++ objects and libs
 
