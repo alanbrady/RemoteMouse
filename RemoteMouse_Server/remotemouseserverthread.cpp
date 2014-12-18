@@ -103,8 +103,10 @@ void RemoteMouseServerThread::parseMouseMoveData(const char *data)
     // change endianess
     byteSwap8(xStr);
     byteSwap8(yStr);
-    xAmt = *((double*)xStr);
-    yAmt = *((double*)yStr);
+//    xAmt = *((double*)xStr);
+//    yAmt = *((double*)yStr);
+    memcpy(&xAmt, xStr, 8);
+    memcpy(&yAmt, yStr, 8);
 
 
     // adjust cursor
