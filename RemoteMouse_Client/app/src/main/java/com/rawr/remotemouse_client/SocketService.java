@@ -11,7 +11,9 @@ import java.net.Socket;
 import java.util.Arrays;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 import android.os.Binder;
@@ -98,7 +100,10 @@ public class SocketService extends Service {
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		return m_binder;
+		if (m_socket == null || !m_socket.isConnected()) {
+            connectSocket();
+        }
+        return m_binder;
 	}
 
 	public void setStatusCallback(StatusCallback callback) {
@@ -109,10 +114,14 @@ public class SocketService extends Service {
 		m_verificationCallback = callback;
 	}
 	
-	public void connectSocket(String ip, String id, String key) {
-		m_ip = ip;
-		m_id = id;
-		m_key = key;
+	public void connectSocket() {
+//		m_ip = ip;
+//		m_id = id;
+//		m_key = key;
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.preferences_key), Context.MODE_PRIVATE);
+        m_ip = prefs.getString(getString(R.string.server_ip_key), "");
+        m_id = prefs.getString(getString(R.string.client_id_key), "");
+        m_key = prefs.getString(getString(R.string.client_key_key), "");
 		new Thread(new ConnectRunnable()).start();
 	}
 

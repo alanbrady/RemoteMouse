@@ -15,9 +15,9 @@ import android.content.ServiceConnection;
 import android.util.Log;
 
 public class ConnectActivity extends Activity {
-	String m_ip;
-	String m_id;
-	String m_key;
+//	String m_ip;
+//	String m_id;
+//	String m_key;
 	SocketService m_socketService;
 	boolean m_isBound;
 	TextView m_statusText;
@@ -28,9 +28,9 @@ public class ConnectActivity extends Activity {
 		setContentView(R.layout.connect_screen_layout);
 		
 		Intent i = getIntent();
-		m_ip = i.getStringExtra("ip");
-		m_id = i.getStringExtra("id");
-		m_key = i.getStringExtra("key");
+//		m_ip = i.getStringExtra("ip");
+//		m_id = i.getStringExtra("id");
+//		m_key = i.getStringExtra("key");
 		
 		m_statusText = (TextView) findViewById(R.id.connectStatusText);
 		
@@ -57,7 +57,7 @@ public class ConnectActivity extends Activity {
 				m_isBound = true;
 				m_socketService.setStatusCallback(new SocketStatusCallback());
 				m_socketService.setVerificationCallback(new SocketVerificationCallback());
-				m_socketService.connectSocket(m_ip, m_id, m_key);
+//                m_socketService.connectSocket();
 			}
 		}
 		
@@ -85,7 +85,6 @@ public class ConnectActivity extends Activity {
 		public void verificationPass() {
 			Intent trackpad = new Intent(getApplicationContext(), TrackpadActivity.class);
 			startActivity(trackpad);
-//			finish();
 		}
 
 		@Override

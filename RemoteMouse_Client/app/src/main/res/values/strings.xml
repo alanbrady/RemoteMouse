@@ -7,5 +7,9 @@
     <string name="starting_textview">Null</string>
     <string name="title_activity_connect">ConnectActivity</string>
     <string name="title_activity_trackpad">TrackpadActivity</string>
+    <string name="preferences_key">REMOTE_MOUSE_PREFERENCES</string>
+    <string name="server_ip_key">SERVER_IP</string>
+    <string name="client_id_key">CLIENT_ID</string>
+    <string name="client_key_key">CLIENT_KEY</string>
 
 </resources>

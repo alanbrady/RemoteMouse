@@ -8,10 +8,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-
-/**
- * TODO: document your custom view class.
- */
 public class TrackpadView extends View {
 	private TrackpadCallback m_trackPadCallback;
 	
