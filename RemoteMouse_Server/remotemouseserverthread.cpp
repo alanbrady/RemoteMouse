@@ -114,10 +114,22 @@ void RemoteMouseServerThread::parseMouseMoveData(const char *data)
     QDesktopWidget* desktop = QApplication::desktop();
     QCursor c = desktop->cursor();
     QPoint pos = desktop->mapToGlobal(c.pos());
-    pos.setX(pos.x()+xAmt);
-    pos.setY(pos.y()+yAmt);
-    c.setPos(pos);
-    desktop->setCursor(c);
+    double iter = 500;
+    double gradX = xAmt/iter;
+    double gradY = yAmt/iter;
+    double posX = pos.x();
+    double posY = pos.y();
+    for (int i = 0; i < iter; i++) {
+        posX += gradX;
+        posY += gradY;
+        pos.setX(posX);
+        pos.setY(posY);
+        c.setPos(pos);
+    }
+//    pos.setX(pos.x()+xAmt);
+//    pos.setY(pos.y()+yAmt);
+//    c.setPos(pos);
+//    desktop->setCursor(c);
 }
 
 void RemoteMouseServerThread::byteSwap8(void *v)
@@ -136,7 +148,7 @@ void RemoteMouseServerThread::performMouseClick()
     // code here
 
     // Windows code
-    qDebug() << "Mouse click received";
+//    qDebug() << "Mouse click received";
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP,
                 0, 0, 0, 0);
 
