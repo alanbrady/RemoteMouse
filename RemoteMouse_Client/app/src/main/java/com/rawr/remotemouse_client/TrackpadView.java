@@ -9,7 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 public class TrackpadView extends View {
-	private TrackpadCallback m_trackPadCallback;
+//	private TrackpadCallback m_trackPadCallback;
 	
 	public TrackpadView(Context context) {
 		super(context);
@@ -27,7 +27,7 @@ public class TrackpadView extends View {
 	}
 
 	private void init(AttributeSet attrs, int defStyle) {
-		m_trackPadCallback = null;
+//		m_trackPadCallback = null;
 	}
 
 	@Override
@@ -36,37 +36,38 @@ public class TrackpadView extends View {
     }
 
 	
-	public void setCallback(TrackpadCallback callback) {
-		m_trackPadCallback = callback;
-	}
+//	public void setCallback(TrackpadCallback callback) {
+//		m_trackPadCallback = callback;
+//	}
 	
-	@SuppressLint("ClickableViewAccessibility") @Override
-	public boolean onTouchEvent(MotionEvent e) {
-		if (m_trackPadCallback != null) {
-//			mTpCallback.callback(e);
-			int action = e.getActionMasked();
-			switch(action) {
-			case MotionEvent.ACTION_DOWN:
-				m_trackPadCallback.mouseDown(e);
-				break;
-			case MotionEvent.ACTION_UP:
-				m_trackPadCallback.mouseUp(e);
-				break;
-			case MotionEvent.ACTION_MOVE:
-				m_trackPadCallback.mouseMove(e);
-				break;
-			}
-		} else {
-			Log.e("trackpad_view", "Error: no callback initiated");
-		}
-		return true;
-	}
+//	@SuppressLint("ClickableViewAccessibility") @Override
+//	public boolean onTouchEvent(MotionEvent e) {
+//        Log.d("trackpad_view", "Thread: " + Thread.currentThread().getId());
+//		if (m_trackPadCallback != null) {
+////			mTpCallback.callback(e);
+//			int action = e.getActionMasked();
+//			switch(action) {
+//			case MotionEvent.ACTION_DOWN:
+//				m_trackPadCallback.mouseDown(e);
+//				break;
+//			case MotionEvent.ACTION_UP:
+//				m_trackPadCallback.mouseUp(e);
+//				break;
+//			case MotionEvent.ACTION_MOVE:
+//				m_trackPadCallback.mouseMove(e);
+//				break;
+//			}
+//		} else {
+//			Log.e("trackpad_view", "Error: no callback initiated");
+//		}
+//		return true;
+//	}
 
-	public interface TrackpadCallback {
-		public void mouseDown(MotionEvent e);
-		public void mouseUp(MotionEvent e);
-		public void mouseMove(MotionEvent e);
-	}
+//	public interface TrackpadCallback {
+//		public void mouseDown(MotionEvent e);
+//		public void mouseUp(MotionEvent e);
+//		public void mouseMove(MotionEvent e);
+//	}
 }
 
 

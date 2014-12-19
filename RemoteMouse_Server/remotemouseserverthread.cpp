@@ -35,7 +35,26 @@ void RemoteMouseServerThread::parseReadData()
         SocketDataQueue::SocketData socketData = m_socketDataQueue.dequeueData();
         const char* data = socketData.getData();
         QString status = "";
-        if (strncmp(data, "CHAL_REQ", 8) == 0) {
+        if (strncmp(data, "MOUS_DAT", 8) == 0) {
+            if (m_isVerified) {
+                parseMouseMoveData(data);
+
+            } else {
+                // close socket and emit failure message if attenmpts to send mouse data
+                // without passing verification
+                m_socket->close();
+                QString fail("Error: attempt to send mouse data without verification");
+                emit serverError(fail);
+            }
+        } else if (strncmp(data, "MOUS_CLK", 8) == 0) {
+            if (m_isVerified)
+                performMouseClick();
+            else {
+                m_socket->close();
+                QString fail("Error: attempt to send mouse click without verification");
+                emit serverError(fail);
+            }
+        } else if (strncmp(data, "CHAL_REQ", 8) == 0) {
             status = "Challenge requested from: ";
             status += m_peerAddress;
             emit statusMessage(status);
@@ -57,25 +76,6 @@ void RemoteMouseServerThread::parseReadData()
             }
             status += m_peerAddress;
             emit statusMessage(status);
-        } else if (strncmp(data, "MOUS_DAT", 8) == 0) {
-            if (m_isVerified) {
-                parseMouseMoveData(data);
-
-            } else {
-                // close socket and emit failure message if attenmpts to send mouse data
-                // without passing verification
-                m_socket->close();
-                QString fail("Error: attempt to send mouse data without verification");
-                emit serverError(fail);
-            }
-        } else if (strncmp(data, "MOUS_CLK", 8) == 0) {
-            if (m_isVerified)
-                performMouseClick();
-            else {
-                m_socket->close();
-                QString fail("Error: attempt to send mouse click without verification");
-                emit serverError(fail);
-            }
         } else {
             QString fail("Error: bad client request - ");
             fail += data;
@@ -108,6 +108,7 @@ void RemoteMouseServerThread::parseMouseMoveData(const char *data)
     memcpy(&xAmt, xStr, 8);
     memcpy(&yAmt, yStr, 8);
 
+//    qDebug() << "Mouse move: " << xAmt << " " << yAmt;
 
     // adjust cursor
     QDesktopWidget* desktop = QApplication::desktop();

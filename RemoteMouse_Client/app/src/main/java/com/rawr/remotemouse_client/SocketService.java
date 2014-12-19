@@ -126,6 +126,7 @@ public class SocketService extends Service {
 	}
 
     public void sendMouseMove(double x, double y) {
+//        Log.d("socket_serv", "Thread: " + Thread.currentThread().getId());
         String msg = "MOUS_DAT";
         byte[] bytes = new byte[8];
         try {
