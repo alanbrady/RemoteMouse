@@ -29,6 +29,21 @@ public class SocketService extends Service {
 	private DataOutputStream m_out = null;
 	private BufferedInputStream m_in = null;
 
+    private static enum Message {
+        MOUSE_DATA(1),
+        MOUSE_CLICK(2),
+        CHALLENGE_REQUEST(3),
+        CHALLENGE_RESPONSE(4);
+
+        private int value;
+
+        Message(int i) {
+            this.value = i;
+        }
+
+        public int getValue() { return value; }
+    }
+
     public SocketService() {
 	}
 
@@ -127,11 +142,12 @@ public class SocketService extends Service {
 
     public void sendMouseMove(double x, double y) {
 //        Log.d("socket_serv", "Thread: " + Thread.currentThread().getId());
-        String msg = "MOUS_DAT";
+//        String msg = "MOUS_DAT";
         byte[] bytes = new byte[8];
         try {
-            m_out.write(24);
-            m_out.write(msg.getBytes("ASCII"));
+            m_out.write(17);
+            m_out.write(Message.MOUSE_DATA.getValue());
+//            m_out.write(msg.getBytes("ASCII"));
             ByteBuffer.wrap(bytes).putDouble(x);
             m_out.write(bytes);
             ByteBuffer.wrap(bytes).putDouble(y);
@@ -145,10 +161,11 @@ public class SocketService extends Service {
     }
 
     public void sendMouseClick() {
-        String msg = "MOUS_CLK";
+//        String msg = "MOUS_CLK";
         try {
-            m_out.write(8);
-            m_out.write(msg.getBytes("ASCII"));
+            m_out.write(1);
+            m_out.write(Message.MOUSE_CLICK.getValue());
+//            m_out.write(msg.getBytes("ASCII"));
             m_out.flush();
         } catch (UnsupportedEncodingException e1) {
             e1.printStackTrace();
@@ -159,8 +176,9 @@ public class SocketService extends Service {
 
 	private byte[] getChallenge() {
 		try {
-            m_out.write(8);
-			m_out.write("CHAL_REQ".getBytes("ASCII"));
+            m_out.write(1);
+            m_out.write(Message.CHALLENGE_REQUEST.getValue());
+//			m_out.write("CHAL_REQ".getBytes("ASCII"));
 			m_out.flush();
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
@@ -191,8 +209,9 @@ public class SocketService extends Service {
 			k++;
 		}
 		try {
-            m_out.write(9+m_id.length()+hash.length);
-			m_out.write("CHAL_RSP".getBytes("ASCII"));
+            m_out.write(2+m_id.length()+hash.length);
+//			m_out.write("CHAL_RSP".getBytes("ASCII"));
+            m_out.write(Message.CHALLENGE_RESPONSE.getValue());
 			m_out.write(m_id.length());
 			m_out.write(m_id.getBytes("ASCII"));
 			m_out.write(hash);

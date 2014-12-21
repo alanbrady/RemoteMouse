@@ -28,6 +28,13 @@ public:
                                      QObject *parent = 0);
     ~RemoteMouseServerThread();
 
+    enum Message {
+        MOUSE_DATA = 1,
+        MOUSE_CLICK,
+        CHALLENGE_REQUEST,
+        CHALLENGE_RESPONSE
+    };
+
     void run();
 
     qintptr socketDescriptor() const { return m_socketDesc; }
@@ -48,7 +55,7 @@ private:
     QString m_peerAddress;
     SocketDataQueue m_socketDataQueue;
 
-    void parseReadData();
+    void parseReadData(const char* data);
     void parseMouseMoveData(const char *data);
     void byteSwap8(void* v);
     void performMouseClick();
